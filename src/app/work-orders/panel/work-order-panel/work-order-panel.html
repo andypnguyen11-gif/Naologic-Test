@@ -5,31 +5,42 @@
       <button class="wo-panel-close" type="button" (click)="onClose()">Close</button>
     </header>
 
-    <form class="wo-panel-body">
+    <form class="wo-panel-body" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="wo-field">
         <label>Work Order Name</label>
-        <input type="text" placeholder="Enter work order name" />
+        <input
+          type="text"
+          formControlName="name"
+          placeholder="Enter work order name"
+          [class.invalid]="isFieldInvalid('name')"
+        />
+        <p class="wo-field-error" *ngIf="isFieldInvalid('name')">Work order name is required.</p>
       </div>
 
       <div class="wo-field">
         <label>Status</label>
-        <div class="wo-placeholder">Dropdown</div>
+        <select formControlName="status" [class.invalid]="isFieldInvalid('status')">
+          <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+        </select>
       </div>
 
       <div class="wo-field-row">
         <div class="wo-field">
           <label>Start Date</label>
-          <div class="wo-placeholder">Datepicker</div>
+          <input type="date" formControlName="startDate" [class.invalid]="isFieldInvalid('startDate')" />
+          <p class="wo-field-error" *ngIf="isFieldInvalid('startDate')">Start date is required.</p>
         </div>
         <div class="wo-field">
           <label>End Date</label>
-          <div class="wo-placeholder">Datepicker</div>
+          <input type="date" formControlName="endDate" [class.invalid]="isFieldInvalid('endDate')" />
+          <p class="wo-field-error" *ngIf="isFieldInvalid('endDate')">End date is required.</p>
         </div>
       </div>
+      <p class="wo-field-error" *ngIf="showDateRangeError">End date must be on or after start date.</p>
 
       <div class="wo-panel-actions">
         <button class="wo-btn secondary" type="button" (click)="onClose()">Cancel</button>
-        <button class="wo-btn primary" type="button">{{ actionLabel }}</button>
+        <button class="wo-btn primary" type="submit">{{ actionLabel }}</button>
       </div>
     </form>
   </aside>

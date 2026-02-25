@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { TimelineComponent } from '../timeline/timeline';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 import { WorkOrdersService } from '../../services/work-orders.service';
-import { WorkOrderPanel } from '../panel/work-order-panel/work-order-panel';
+import { WorkOrderPanel, WorkOrderPanelSubmitEvent } from '../panel/work-order-panel/work-order-panel';
 
 @Component({
   selector: 'app-work-orders-page',
@@ -21,6 +21,7 @@ export class WorkOrdersPage implements OnInit {
   protected timelineDates: Date[] = [];
   protected isPanelOpen = false;
   protected panelMode: 'create' | 'edit' = 'create';
+  protected selectedOrder: WorkOrderDocument | null = null;
 
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
@@ -40,13 +41,59 @@ export class WorkOrdersPage implements OnInit {
     this.buildTimeline(value);
   }
 
-  protected onEditWorkOrder(_order: WorkOrderDocument): void {
+  protected onEditWorkOrder(order: WorkOrderDocument): void {
+    this.selectedOrder = order;
     this.panelMode = 'edit';
     this.isPanelOpen = true;
   }
 
   protected onDeleteWorkOrder(order: WorkOrderDocument): void {
     this.workOrders = this.workOrders.filter((item) => item.docId !== order.docId);
+    if (this.selectedOrder?.docId === order.docId) {
+      this.onClosePanel();
+    }
+  }
+
+  protected onClosePanel(): void {
+    this.isPanelOpen = false;
+    this.selectedOrder = null;
+  }
+
+  protected onSaveOrder(event: WorkOrderPanelSubmitEvent): void {
+    if (event.mode === 'edit' && event.orderId) {
+      this.workOrders = this.workOrders.map((order) => {
+        if (order.docId !== event.orderId) {
+          return order;
+        }
+        return {
+          ...order,
+          data: {
+            ...order.data,
+            name: event.value.name,
+            status: event.value.status,
+            startDate: event.value.startDate,
+            endDate: event.value.endDate
+          }
+        };
+      });
+      this.onClosePanel();
+      return;
+    }
+
+    const fallbackWorkCenterId = this.workCenters[0]?.docId ?? '';
+    const createdOrder: WorkOrderDocument = {
+      docId: `wo-${Date.now()}`,
+      docType: 'workOrder',
+      data: {
+        name: event.value.name,
+        workCenterId: fallbackWorkCenterId,
+        status: event.value.status,
+        startDate: event.value.startDate,
+        endDate: event.value.endDate
+      }
+    };
+    this.workOrders = [...this.workOrders, createdOrder];
+    this.onClosePanel();
   }
 
   private buildTimeline(scale: Timescale): void {

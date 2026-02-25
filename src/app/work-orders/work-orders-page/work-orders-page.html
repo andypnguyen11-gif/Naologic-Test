@@ -24,6 +24,8 @@
   <app-work-order-panel
     [open]="isPanelOpen"
     [mode]="panelMode"
-    (closePanel)="isPanelOpen = false"
+    [order]="selectedOrder"
+    (closePanel)="onClosePanel()"
+    (saveOrder)="onSaveOrder($event)"
   />
 </div>

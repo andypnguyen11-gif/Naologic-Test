@@ -1,0 +1,17 @@
+<div class="wo-page">
+  <header class="wo-header">
+    <div class="wo-title">
+      <h1>Work Orders</h1>
+    </div>
+    <div class="wo-controls">
+      <span class="wo-label">Timescale:</span>
+      <button class="wo-select" type="button">{{ selectedTimescale }}</button>
+    </div>
+  </header>
+
+  <app-timeline
+    [timescaleLabel]="selectedTimescale"
+    [workCenters]="workCenters"
+    [timelineHeader]="timelineHeader"
+  />
+</div>

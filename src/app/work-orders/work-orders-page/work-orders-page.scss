@@ -1,0 +1,43 @@
+.wo-page {
+  padding: 24px 32px 40px;
+  background: #f7f9fc;
+  min-height: 100vh;
+  color: #030929;
+  font-family: "Circular-Std", sans-serif;
+}
+
+.wo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.wo-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wo-label {
+  font-size: 13px;
+  color: #687196;
+}
+
+.wo-select {
+  height: 36px;
+  min-width: 120px;
+  border-radius: 8px;
+  border: 1px solid #d6d8ff;
+  background: #ffffff;
+  color: #030929;
+  font-size: 14px;
+  text-align: left;
+  padding: 0 12px;
+}

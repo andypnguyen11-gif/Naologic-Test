@@ -1,0 +1,27 @@
+<section class="wo-board">
+  <div class="wo-grid">
+    <div class="wo-left">
+      <div class="wo-left-header">Work Center</div>
+      <div class="wo-left-row" *ngFor="let wc of workCenters">
+        {{ wc }}
+      </div>
+    </div>
+
+    <div class="wo-right">
+      <div class="wo-right-header">
+        <div class="wo-timescale">
+          <div class="wo-time-cell" *ngFor="let cell of timelineHeader">
+            {{ cell }}
+          </div>
+        </div>
+        <div class="wo-today-indicator" aria-hidden="true"></div>
+      </div>
+
+      <div class="wo-right-row" *ngFor="let wc of workCenters">
+        <div class="wo-row-grid">
+          <div class="wo-time-cell" *ngFor="let cell of timelineHeader"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

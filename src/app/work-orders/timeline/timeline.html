@@ -3,13 +3,13 @@
     <div class="wo-left">
       <div class="wo-left-header">Work Center</div>
       <div class="wo-left-row" *ngFor="let wc of workCenters">
-        {{ wc }}
+        {{ wc.data.name }}
       </div>
     </div>
 
     <div class="wo-right">
       <div class="wo-right-header">
-        <div class="wo-timescale">
+        <div class="wo-timescale" [style.gridTemplateColumns]="gridTemplateColumns">
           <div class="wo-time-cell" *ngFor="let cell of timelineHeader">
             {{ cell }}
           </div>
@@ -18,7 +18,7 @@
       </div>
 
       <div class="wo-right-row" *ngFor="let wc of workCenters">
-        <div class="wo-row-grid">
+        <div class="wo-row-grid" [style.gridTemplateColumns]="gridTemplateColumns">
           <div class="wo-time-cell" *ngFor="let cell of timelineHeader"></div>
         </div>
       </div>

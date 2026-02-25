@@ -32,7 +32,8 @@
 
 .wo-right {
   position: relative;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .wo-right-header {
@@ -43,7 +44,6 @@
 
 .wo-timescale {
   display: grid;
-  grid-template-columns: repeat(14, minmax(120px, 1fr));
 }
 
 .wo-time-cell {
@@ -52,6 +52,7 @@
   color: #687196;
   border-right: 1px solid #eef0ff;
   min-height: 48px;
+  white-space: nowrap;
 }
 
 .wo-right-row {
@@ -60,7 +61,6 @@
 
 .wo-row-grid {
   display: grid;
-  grid-template-columns: repeat(14, minmax(120px, 1fr));
   min-height: 56px;
 }
 

@@ -5,7 +5,9 @@
     </div>
     <div class="wo-controls">
       <span class="wo-label">Timescale:</span>
-      <button class="wo-select" type="button">{{ selectedTimescale }}</button>
+      <select class="wo-select" [value]="selectedTimescale" (change)="onTimescaleChange($event)">
+        <option *ngFor="let scale of timescales" [value]="scale">{{ scale }}</option>
+      </select>
     </div>
   </header>
 

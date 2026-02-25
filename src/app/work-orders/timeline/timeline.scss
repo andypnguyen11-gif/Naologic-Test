@@ -57,11 +57,82 @@
 
 .wo-right-row {
   border-bottom: 1px solid #f1f3f8;
+  position: relative;
 }
 
 .wo-row-grid {
   display: grid;
   min-height: 56px;
+}
+
+.wo-row-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  pointer-events: none;
+  padding: 0 12px;
+}
+
+.wo-bar {
+  background: #e6edff;
+  border-radius: 10px;
+  padding: 6px 10px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px rgba(62, 64, 219, 0.1);
+  pointer-events: auto;
+}
+
+.wo-bar-title {
+  font-size: 13px;
+  color: #030929;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.wo-bar-status {
+  font-size: 11px;
+  text-transform: capitalize;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #d6d8ff;
+  color: #3e40db;
+  white-space: nowrap;
+}
+
+.wo-bar-status[data-status='open'] {
+  background: #d6d8ff;
+  color: #3e40db;
+}
+
+.wo-bar-status[data-status='in-progress'] {
+  background: #cfd2ff;
+  color: #3e40db;
+}
+
+.wo-bar-status[data-status='complete'] {
+  background: #e1ffcc;
+  color: #2c7a2c;
+}
+
+.wo-bar-status[data-status='blocked'] {
+  background: #fceeb5;
+  color: #9b6b00;
+}
+
+.wo-bar-menu {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1;
+  color: #687196;
+  cursor: pointer;
+  padding: 0 4px;
 }
 
 .wo-today-indicator {

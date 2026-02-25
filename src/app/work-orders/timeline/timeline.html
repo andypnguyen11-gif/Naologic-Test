@@ -21,6 +21,21 @@
         <div class="wo-row-grid" [style.gridTemplateColumns]="gridTemplateColumns">
           <div class="wo-time-cell" *ngFor="let cell of timelineHeader"></div>
         </div>
+        <div class="wo-row-overlay" [style.gridTemplateColumns]="gridTemplateColumns">
+          <div
+            class="wo-bar"
+            *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
+            [style.gridColumn]="getGridColumn(order)"
+          >
+            <span class="wo-bar-title">{{ order.data.name }}</span>
+            <span class="wo-bar-status" [attr.data-status]="order.data.status">
+              {{ order.data.status }}
+            </span>
+            <button class="wo-bar-menu" type="button" aria-label="Work order actions">
+              ⋯
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

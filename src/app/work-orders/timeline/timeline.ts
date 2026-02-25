@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 
 @Component({
@@ -15,8 +15,11 @@ export class TimelineComponent implements OnChanges {
   @Input({ required: true }) timelineHeader: string[] = [];
   @Input({ required: true }) timelineDates: Date[] = [];
   @Input({ required: true }) workOrders: WorkOrderDocument[] = [];
+  @Output() editWorkOrder = new EventEmitter<WorkOrderDocument>();
+  @Output() deleteWorkOrder = new EventEmitter<WorkOrderDocument>();
 
   private indexMap = new Map<string, number>();
+  protected activeMenuOrderId: string | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['timelineDates'] || changes['timescaleLabel']) {
@@ -40,6 +43,25 @@ export class TimelineComponent implements OnChanges {
     }
     const safeEnd = Math.max(start, end);
     return `${start + 1} / ${safeEnd + 2}`;
+  }
+
+  onEditClick(order: WorkOrderDocument): void {
+    this.activeMenuOrderId = null;
+    this.editWorkOrder.emit(order);
+  }
+
+  onDeleteClick(order: WorkOrderDocument): void {
+    this.activeMenuOrderId = null;
+    this.deleteWorkOrder.emit(order);
+  }
+
+  toggleMenu(orderId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.activeMenuOrderId = this.activeMenuOrderId === orderId ? null : orderId;
+  }
+
+  onSurfaceClick(): void {
+    this.activeMenuOrderId = null;
   }
 
   private rebuildIndexMap(): void {

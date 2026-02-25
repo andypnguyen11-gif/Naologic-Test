@@ -1,4 +1,4 @@
-<section class="wo-board">
+<section class="wo-board" (click)="onSurfaceClick()">
   <div class="wo-grid">
     <div class="wo-left">
       <div class="wo-left-header">Work Center</div>
@@ -26,14 +26,34 @@
             class="wo-bar"
             *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
             [style.gridColumn]="getGridColumn(order)"
+            (click)="$event.stopPropagation()"
           >
             <span class="wo-bar-title">{{ order.data.name }}</span>
             <span class="wo-bar-status" [attr.data-status]="order.data.status">
               {{ order.data.status }}
             </span>
-            <button class="wo-bar-menu" type="button" aria-label="Work order actions">
+            <button
+              class="wo-bar-menu"
+              type="button"
+              aria-label="Work order actions"
+              (click)="toggleMenu(order.docId, $event)"
+            >
               ⋯
             </button>
+            <div
+              class="wo-action-menu"
+              *ngIf="activeMenuOrderId === order.docId"
+              (click)="$event.stopPropagation()"
+            >
+              <button type="button" class="wo-action-menu-item" (click)="onEditClick(order)">Edit</button>
+              <button
+                type="button"
+                class="wo-action-menu-item danger"
+                (click)="onDeleteClick(order)"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>

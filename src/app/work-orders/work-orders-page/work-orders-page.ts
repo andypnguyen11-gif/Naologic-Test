@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { TimelineComponent } from '../timeline/timeline';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 import { WorkOrdersService } from '../../services/work-orders.service';
+import { WorkOrderPanel } from '../panel/work-order-panel/work-order-panel';
 
 @Component({
   selector: 'app-work-orders-page',
-  imports: [CommonModule, TimelineComponent],
+  imports: [CommonModule, TimelineComponent, WorkOrderPanel],
   templateUrl: './work-orders-page.html',
   styleUrl: './work-orders-page.scss',
   standalone: true
@@ -18,6 +19,8 @@ export class WorkOrdersPage implements OnInit {
   protected workOrders: WorkOrderDocument[] = [];
   protected timelineHeader: string[] = [];
   protected timelineDates: Date[] = [];
+  protected isPanelOpen = false;
+  protected panelMode: 'create' | 'edit' = 'create';
 
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
@@ -35,6 +38,15 @@ export class WorkOrdersPage implements OnInit {
     const value = target.value as Timescale;
     this.selectedTimescale = value;
     this.buildTimeline(value);
+  }
+
+  protected onEditWorkOrder(_order: WorkOrderDocument): void {
+    this.panelMode = 'edit';
+    this.isPanelOpen = true;
+  }
+
+  protected onDeleteWorkOrder(order: WorkOrderDocument): void {
+    this.workOrders = this.workOrders.filter((item) => item.docId !== order.docId);
   }
 
   private buildTimeline(scale: Timescale): void {

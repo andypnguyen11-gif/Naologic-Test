@@ -1,1 +1,36 @@
-<p>work-order-panel works!</p>
+<div class="wo-panel-overlay" *ngIf="open" (click)="onClose()">
+  <aside class="wo-panel" (click)="$event.stopPropagation()">
+    <header class="wo-panel-header">
+      <h2>{{ title }}</h2>
+      <button class="wo-panel-close" type="button" (click)="onClose()">Close</button>
+    </header>
+
+    <form class="wo-panel-body">
+      <div class="wo-field">
+        <label>Work Order Name</label>
+        <input type="text" placeholder="Enter work order name" />
+      </div>
+
+      <div class="wo-field">
+        <label>Status</label>
+        <div class="wo-placeholder">Dropdown</div>
+      </div>
+
+      <div class="wo-field-row">
+        <div class="wo-field">
+          <label>Start Date</label>
+          <div class="wo-placeholder">Datepicker</div>
+        </div>
+        <div class="wo-field">
+          <label>End Date</label>
+          <div class="wo-placeholder">Datepicker</div>
+        </div>
+      </div>
+
+      <div class="wo-panel-actions">
+        <button class="wo-btn secondary" type="button" (click)="onClose()">Cancel</button>
+        <button class="wo-btn primary" type="button">{{ actionLabel }}</button>
+      </div>
+    </form>
+  </aside>
+</div>

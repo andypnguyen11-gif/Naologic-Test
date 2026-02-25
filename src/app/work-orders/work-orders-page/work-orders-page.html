@@ -17,5 +17,13 @@
     [workOrders]="workOrders"
     [timelineDates]="timelineDates"
     [timelineHeader]="timelineHeader"
+    (editWorkOrder)="onEditWorkOrder($event)"
+    (deleteWorkOrder)="onDeleteWorkOrder($event)"
+  />
+
+  <app-work-order-panel
+    [open]="isPanelOpen"
+    [mode]="panelMode"
+    (closePanel)="isPanelOpen = false"
   />
 </div>

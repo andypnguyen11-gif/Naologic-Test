@@ -23,22 +23,58 @@
           formControlName="status"
           [items]="statusOptions"
           bindLabel="label"
-          bindValue="value"
           [clearable]="false"
           [searchable]="false"
           [ngClass]="{ 'ng-select-invalid': isFieldInvalid('status') }"
-        />
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <span class="wo-status-label">{{ getStatusLabel(item) }}</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <span class="wo-status-option">{{ getStatusLabel(item) }}</span>
+          </ng-template>
+        </ng-select>
       </div>
 
       <div class="wo-field-row">
         <div class="wo-field">
           <label>Start Date</label>
-          <input type="date" formControlName="startDate" [class.invalid]="isFieldInvalid('startDate')" />
+          <input
+            type="text"
+            class="wo-date-control"
+            placeholder="mm.dd.yyyy"
+            formControlName="startDate"
+            ngbDatepicker
+            #startDatePicker="ngbDatepicker"
+            container="body"
+            datepickerClass="wo-datepicker-popup"
+            [autoClose]="false"
+            [showWeekNumbers]="false"
+            [navigation]="'select'"
+            readonly
+            (click)="startDatePicker.open()"
+            (dateSelect)="startDatePicker.close()"
+          />
           <p class="wo-field-error" *ngIf="isFieldInvalid('startDate')">Start date is required.</p>
         </div>
         <div class="wo-field">
           <label>End Date</label>
-          <input type="date" formControlName="endDate" [class.invalid]="isFieldInvalid('endDate')" />
+          <input
+            type="text"
+            class="wo-date-control"
+            placeholder="mm.dd.yyyy"
+            formControlName="endDate"
+            ngbDatepicker
+            #endDatePicker="ngbDatepicker"
+            container="body"
+            datepickerClass="wo-datepicker-popup"
+            [autoClose]="false"
+            [showWeekNumbers]="false"
+            [navigation]="'select'"
+            readonly
+            (click)="endDatePicker.open()"
+            (dateSelect)="endDatePicker.close()"
+          />
           <p class="wo-field-error" *ngIf="isFieldInvalid('endDate')">End date is required.</p>
         </div>
       </div>
@@ -47,7 +83,10 @@
 
       <div class="wo-panel-actions">
         <button class="wo-btn secondary" type="button" (click)="onClose()">Cancel</button>
-        <button class="wo-btn primary" type="submit">{{ actionLabel }}</button>
+        <button class="wo-btn primary" type="submit" *ngIf="mode === 'edit'; else createCta">Save</button>
+        <ng-template #createCta>
+          <button class="wo-btn primary" type="submit">Create</button>
+        </ng-template>
       </div>
     </form>
   </aside>

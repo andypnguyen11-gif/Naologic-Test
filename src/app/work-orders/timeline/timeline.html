@@ -54,7 +54,8 @@
               [ngModelOptions]="{ standalone: true }"
               (open)="onActionOpen(order.docId, wc.docId)"
               (close)="onActionClose(order.docId, wc.docId)"
-              (ngModelChange)="onActionChange(order, $event)"
+              (change)="onActionChange(order, $event)"
+              (click)="$event.stopPropagation()"
               placeholder="⋯"
             />
           </div>

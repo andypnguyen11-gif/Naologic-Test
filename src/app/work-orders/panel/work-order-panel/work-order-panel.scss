@@ -56,8 +56,8 @@
     color: #687196;
   }
 
-  input,
-  select {
+  > input,
+  > select {
     height: 40px;
     border-radius: 10px;
     border: 1px solid #d6d8ff;
@@ -68,12 +68,12 @@
     font-family: "Circular-Std", sans-serif;
   }
 
-  input.invalid,
-  select.invalid {
+  > input.invalid,
+  > select.invalid {
     border-color: #e21a23;
   }
 
-  select {
+  > select {
     appearance: none;
   }
 }
@@ -90,6 +90,24 @@
 
 :host ::ng-deep .wo-field ng-select .ng-value-container {
   padding-left: 12px;
+}
+
+:host ::ng-deep .wo-field ng-select .ng-value-label,
+:host ::ng-deep .wo-field ng-select .ng-placeholder {
+  color: #030929 !important;
+  opacity: 1 !important;
+}
+
+:host ::ng-deep .wo-field ng-select .ng-input > input {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+:host ::ng-deep .wo-status-label,
+:host ::ng-deep .wo-status-option {
+  color: #030929;
 }
 
 :host ::ng-deep .wo-field ng-select .ng-arrow-wrapper {
@@ -130,6 +148,10 @@
   gap: 12px;
 }
 
+.wo-date-control {
+  cursor: pointer;
+}
+
 .wo-panel-actions {
   display: flex;
   justify-content: flex-end;
@@ -145,10 +167,17 @@
 
 .wo-btn {
   height: 40px;
+  min-width: 72px;
   padding: 0 18px;
   border-radius: 10px;
   border: none;
   font-size: 13px;
+  line-height: 1;
+  font-family: "Circular-Std", sans-serif;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 

@@ -2,3 +2,62 @@
 @import "@ng-select/ng-select/themes/default.theme.css";
 
 /* You can add global styles to this file, and also import other style files */
+
+.wo-datepicker-popup {
+  font-family: "Circular-Std", sans-serif;
+  border: 1px solid #b8bfdc;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(3, 9, 41, 0.1);
+  overflow: hidden;
+}
+
+.wo-datepicker-popup .ngb-dp-header {
+  background: #ffffff;
+  border-bottom: 0;
+  padding: 10px 10px 6px;
+}
+
+.wo-datepicker-popup .ngb-dp-navigation-select {
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+}
+
+.wo-datepicker-popup .ngb-dp-navigation-select select {
+  font-family: "Circular-Std", sans-serif;
+  font-size: 14px;
+  color: #030929;
+  height: 32px;
+  border: 1px solid #d6d8ff;
+  border-radius: 8px;
+  padding: 0 8px;
+  background: #ffffff;
+}
+
+.wo-datepicker-popup .ngb-dp-weekday {
+  font-style: normal;
+  font-weight: 700;
+  color: #030929;
+}
+
+.wo-datepicker-popup .btn-light,
+.wo-datepicker-popup .ngb-dp-day {
+  color: #030929;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+.wo-datepicker-popup .btn-light:hover {
+  background: #f1f3ff;
+}
+
+.wo-datepicker-popup .bg-primary,
+.wo-datepicker-popup .btn-light.bg-primary {
+  background: #3e40db !important;
+  color: #ffffff !important;
+}
+
+.wo-datepicker-popup .text-muted {
+  color: #8a93b3 !important;
+}

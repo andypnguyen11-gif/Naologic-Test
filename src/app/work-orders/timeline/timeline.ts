@@ -67,16 +67,22 @@ export class TimelineComponent implements OnChanges {
     this.deleteWorkOrder.emit(order);
   }
 
-  onActionChange(order: WorkOrderDocument, action: ActionValue | null): void {
+  onActionChange(order: WorkOrderDocument, selection: ActionSelection | null): void {
+    const action = this.resolveAction(selection);
     if (!action) {
       return;
     }
+    this.selectedActionByOrderId[order.docId] = action;
+
     if (action === 'edit') {
       this.onEditClick(order);
     } else {
       this.onDeleteClick(order);
     }
-    this.selectedActionByOrderId[order.docId] = null;
+
+    setTimeout(() => {
+      this.selectedActionByOrderId[order.docId] = null;
+    }, 0);
     this.openedActionOrderId = null;
     this.openedActionWorkCenterId = null;
   }
@@ -94,11 +100,13 @@ export class TimelineComponent implements OnChanges {
   }
 
   onActionOpen(orderId: string, workCenterId: string): void {
+    this.selectedActionByOrderId[orderId] = null;
     this.openedActionOrderId = orderId;
     this.openedActionWorkCenterId = workCenterId;
   }
 
   onActionClose(orderId: string, workCenterId: string): void {
+    this.selectedActionByOrderId[orderId] = null;
     if (this.openedActionOrderId === orderId) {
       this.openedActionOrderId = null;
     }
@@ -150,10 +158,21 @@ export class TimelineComponent implements OnChanges {
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
+  private resolveAction(selection: ActionSelection | null): ActionValue | null {
+    if (!selection) {
+      return null;
+    }
+    if (typeof selection === 'string') {
+      return selection;
+    }
+    return selection.value;
+  }
 }
 
 type Timescale = 'Hour' | 'Day' | 'Week' | 'Month';
 type ActionValue = 'edit' | 'delete';
+type ActionSelection = ActionValue | ActionOption;
 
 interface ActionOption {
   label: string;

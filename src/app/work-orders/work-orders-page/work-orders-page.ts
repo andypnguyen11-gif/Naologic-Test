@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
@@ -28,7 +28,11 @@ export class WorkOrdersPage implements OnInit {
   protected pendingCreateWorkCenterId: string | null = null;
   protected panelSaveError: string | null = null;
 
-  constructor(private readonly workOrdersService: WorkOrdersService) {}
+  constructor(
+    private readonly workOrdersService: WorkOrdersService,
+    private readonly ngZone: NgZone,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.workCenters = this.workOrdersService.getWorkCenters();
@@ -45,10 +49,13 @@ export class WorkOrdersPage implements OnInit {
   }
 
   protected onEditWorkOrder(order: WorkOrderDocument): void {
-    this.selectedOrder = order;
-    this.panelMode = 'edit';
-    this.panelSaveError = null;
-    this.isPanelOpen = true;
+    this.ngZone.run(() => {
+      this.selectedOrder = order;
+      this.panelMode = 'edit';
+      this.panelSaveError = null;
+      this.isPanelOpen = true;
+      this.cdr.detectChanges();
+    });
   }
 
   protected onDeleteWorkOrder(order: WorkOrderDocument): void {
@@ -59,12 +66,15 @@ export class WorkOrdersPage implements OnInit {
   }
 
   protected onCreateWorkOrder(request: CreateWorkOrderRequest): void {
-    this.panelMode = 'create';
-    this.selectedOrder = null;
-    this.pendingCreateStartDate = request.startDate;
-    this.pendingCreateWorkCenterId = request.workCenterId;
-    this.panelSaveError = null;
-    this.isPanelOpen = true;
+    this.ngZone.run(() => {
+      this.panelMode = 'create';
+      this.selectedOrder = null;
+      this.pendingCreateStartDate = request.startDate;
+      this.pendingCreateWorkCenterId = request.workCenterId;
+      this.panelSaveError = null;
+      this.isPanelOpen = true;
+      this.cdr.detectChanges();
+    });
   }
 
   protected onClosePanel(): void {

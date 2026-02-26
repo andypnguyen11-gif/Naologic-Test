@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, Injectable, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { NgbDateParserFormatter, NgbDateStruct, NgbDatepickerModule, NgbInputDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { WorkOrderDocument, WorkOrderStatus } from '../../../models/work-orders.models';
 
@@ -15,10 +16,45 @@ export interface WorkOrderPanelSubmitEvent {
   };
 }
 
+interface StatusOption {
+  label: string;
+  value: WorkOrderStatus;
+}
+
+@Injectable()
+class DotDateParserFormatter extends NgbDateParserFormatter {
+  parse(value: string): NgbDateStruct | null {
+    if (!value) {
+      return null;
+    }
+    const parts = value.trim().split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+    const month = Number(parts[0]);
+    const day = Number(parts[1]);
+    const year = Number(parts[2]);
+    if (!month || !day || !year) {
+      return null;
+    }
+    return { year, month, day };
+  }
+
+  format(date: NgbDateStruct | null): string {
+    if (!date) {
+      return '';
+    }
+    const month = `${date.month}`.padStart(2, '0');
+    const day = `${date.day}`.padStart(2, '0');
+    return `${month}.${day}.${date.year}`;
+  }
+}
+
 @Component({
   selector: 'app-work-order-panel',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule],
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, NgbDatepickerModule],
+  providers: [{ provide: NgbDateParserFormatter, useClass: DotDateParserFormatter }],
   templateUrl: './work-order-panel.html',
   styleUrl: './work-order-panel.scss',
 })
@@ -30,8 +66,10 @@ export class WorkOrderPanel implements OnChanges {
   @Input() saveError: string | null = null;
   @Output() closePanel = new EventEmitter<void>();
   @Output() saveOrder = new EventEmitter<WorkOrderPanelSubmitEvent>();
+  @ViewChild('startDatePicker') private startDatePicker?: NgbInputDatepicker;
+  @ViewChild('endDatePicker') private endDatePicker?: NgbInputDatepicker;
 
-  protected readonly statusOptions: Array<{ label: string; value: WorkOrderStatus }> = [
+  protected readonly statusOptions: StatusOption[] = [
     { label: 'Open', value: 'open' },
     { label: 'In Progress', value: 'in-progress' },
     { label: 'Complete', value: 'complete' },
@@ -40,26 +78,32 @@ export class WorkOrderPanel implements OnChanges {
 
   protected readonly form;
 
-  constructor(private readonly formBuilder: FormBuilder) {
+  constructor(
+    private readonly formBuilder: FormBuilder
+  ) {
     this.form = this.formBuilder.group(
       {
         name: ['', [Validators.required]],
-        status: ['open' as WorkOrderStatus, [Validators.required]],
-        startDate: ['', [Validators.required]],
-        endDate: ['', [Validators.required]]
+        status: [this.statusOptions[0], [Validators.required]],
+        startDate: [null as NgbDateStruct | null, [Validators.required]],
+        endDate: [null as NgbDateStruct | null, [Validators.required]]
       },
       { validators: [this.dateRangeValidator] }
     );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['open'] && this.open) {
-      this.resetFormFromInputs();
+    if (!this.open) {
       return;
     }
 
-    if (this.open && (changes['mode'] || changes['order'] || changes['defaultStartDate'])) {
-      this.resetFormFromInputs();
+    if (changes['open'] || changes['mode'] || changes['order'] || changes['defaultStartDate']) {
+      // Defer once so all bound @Input values settle before hydrating controls.
+      queueMicrotask(() => {
+        if (this.open) {
+          this.resetFormFromInputs();
+        }
+      });
     }
   }
 
@@ -71,6 +115,16 @@ export class WorkOrderPanel implements OnChanges {
     return this.mode === 'edit' ? 'Save' : 'Create';
   }
 
+  protected getStatusLabel(item: StatusOption | WorkOrderStatus | null): string {
+    if (!item) {
+      return '';
+    }
+    if (typeof item === 'string') {
+      return this.statusOptions.find((option) => option.value === item)?.label ?? '';
+    }
+    return item.label;
+  }
+
   protected isFieldInvalid(fieldName: 'name' | 'status' | 'startDate' | 'endDate'): boolean {
     const field = this.form.get(fieldName);
     return !!field && field.invalid && (field.dirty || field.touched);
@@ -78,6 +132,22 @@ export class WorkOrderPanel implements OnChanges {
 
   protected get showDateRangeError(): boolean {
     return !!this.form.errors?.['dateRange'] && (this.form.dirty || this.form.touched);
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  onDocumentMouseDown(event: MouseEvent): void {
+    if (!this.open) {
+      return;
+    }
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+    if (target.closest('.wo-datepicker-popup') || target.closest('.wo-date-control')) {
+      return;
+    }
+    this.startDatePicker?.close();
+    this.endDatePicker?.close();
   }
 
   onClose(): void {
@@ -91,14 +161,20 @@ export class WorkOrderPanel implements OnChanges {
     }
 
     const formValue = this.form.getRawValue();
+    const startDate = this.toIsoDateString(formValue.startDate);
+    const endDate = this.toIsoDateString(formValue.endDate);
+    if (!startDate || !endDate) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.saveOrder.emit({
       mode: this.mode,
       orderId: this.order?.docId ?? null,
       value: {
         name: formValue.name ?? '',
-        status: formValue.status ?? 'open',
-        startDate: formValue.startDate ?? '',
-        endDate: formValue.endDate ?? ''
+        status: formValue.status?.value ?? 'open',
+        startDate,
+        endDate
       }
     });
   }
@@ -107,9 +183,9 @@ export class WorkOrderPanel implements OnChanges {
     if (this.mode === 'edit' && this.order) {
       this.form.reset({
         name: this.order.data.name,
-        status: this.order.data.status,
-        startDate: this.order.data.startDate,
-        endDate: this.order.data.endDate
+        status: this.getStatusOption(this.order.data.status),
+        startDate: this.toDateStruct(this.order.data.startDate),
+        endDate: this.toDateStruct(this.order.data.endDate)
       });
     } else {
       const baseStartDate = this.defaultStartDate ?? this.formatDate(new Date());
@@ -120,9 +196,9 @@ export class WorkOrderPanel implements OnChanges {
       end.setDate(end.getDate() + 7);
       this.form.reset({
         name: '',
-        status: 'open',
-        startDate,
-        endDate: this.formatDate(end)
+        status: this.statusOptions[0],
+        startDate: this.toDateStruct(startDate),
+        endDate: this.toDateStruct(this.formatDate(end))
       });
     }
 
@@ -131,13 +207,13 @@ export class WorkOrderPanel implements OnChanges {
   }
 
   private dateRangeValidator(control: AbstractControl): ValidationErrors | null {
-    const startDate = control.get('startDate')?.value;
-    const endDate = control.get('endDate')?.value;
+    const startDate = control.get('startDate')?.value as NgbDateStruct | null;
+    const endDate = control.get('endDate')?.value as NgbDateStruct | null;
     if (!startDate || !endDate) {
       return null;
     }
 
-    return endDate >= startDate ? null : { dateRange: true };
+    return this.compareDateStruct(startDate, endDate) <= 0 ? null : { dateRange: true };
   }
 
   private formatDate(date: Date): string {
@@ -154,5 +230,38 @@ export class WorkOrderPanel implements OnChanges {
   private isValidDateString(dateString: string): boolean {
     const parsed = this.parseDate(dateString);
     return !Number.isNaN(parsed.getTime());
+  }
+
+  private toDateStruct(dateString: string): NgbDateStruct {
+    const parsed = this.parseDate(dateString);
+    return {
+      year: parsed.getFullYear(),
+      month: parsed.getMonth() + 1,
+      day: parsed.getDate()
+    };
+  }
+
+  private toIsoDateString(value: NgbDateStruct | null): string | null {
+    if (!value) {
+      return null;
+    }
+    const year = `${value.year}`;
+    const month = `${value.month}`.padStart(2, '0');
+    const day = `${value.day}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private compareDateStruct(a: NgbDateStruct, b: NgbDateStruct): number {
+    if (a.year !== b.year) {
+      return a.year - b.year;
+    }
+    if (a.month !== b.month) {
+      return a.month - b.month;
+    }
+    return a.day - b.day;
+  }
+
+  private getStatusOption(status: WorkOrderStatus): StatusOption {
+    return this.statusOptions.find((option) => option.value === status) ?? this.statusOptions[0];
   }
 }

@@ -33,6 +33,7 @@ export class TimelineComponent implements OnChanges {
   ];
   private selectedActionByOrderId: Record<string, ActionValue | null> = {};
   protected openedActionOrderId: string | null = null;
+  protected openedActionWorkCenterId: string | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['timelineDates'] || changes['timescaleLabel']) {
@@ -77,6 +78,7 @@ export class TimelineComponent implements OnChanges {
     }
     this.selectedActionByOrderId[order.docId] = null;
     this.openedActionOrderId = null;
+    this.openedActionWorkCenterId = null;
   }
 
   onTimelineCellClick(workCenterId: string, date: Date, event: MouseEvent): void {
@@ -91,14 +93,22 @@ export class TimelineComponent implements OnChanges {
     return this.selectedActionByOrderId[orderId] ?? null;
   }
 
-  onActionOpen(orderId: string): void {
+  onActionOpen(orderId: string, workCenterId: string): void {
     this.openedActionOrderId = orderId;
+    this.openedActionWorkCenterId = workCenterId;
   }
 
-  onActionClose(orderId: string): void {
+  onActionClose(orderId: string, workCenterId: string): void {
     if (this.openedActionOrderId === orderId) {
       this.openedActionOrderId = null;
     }
+    if (this.openedActionWorkCenterId === workCenterId) {
+      this.openedActionWorkCenterId = null;
+    }
+  }
+
+  isActionRowOpen(workCenterId: string): boolean {
+    return this.openedActionWorkCenterId === workCenterId;
   }
 
   private rebuildIndexMap(): void {

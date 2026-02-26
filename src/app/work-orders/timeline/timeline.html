@@ -17,7 +17,11 @@
         <div class="wo-today-indicator" aria-hidden="true"></div>
       </div>
 
-      <div class="wo-right-row" *ngFor="let wc of workCenters">
+      <div
+        class="wo-right-row"
+        *ngFor="let wc of workCenters"
+        [class.wo-right-row-open]="isActionRowOpen(wc.docId)"
+      >
         <div class="wo-row-grid" [style.gridTemplateColumns]="gridTemplateColumns">
           <div
             class="wo-time-cell"
@@ -48,8 +52,8 @@
               [searchable]="false"
               [ngModel]="getSelectedAction(order.docId)"
               [ngModelOptions]="{ standalone: true }"
-              (open)="onActionOpen(order.docId)"
-              (close)="onActionClose(order.docId)"
+              (open)="onActionOpen(order.docId, wc.docId)"
+              (close)="onActionClose(order.docId, wc.docId)"
               (ngModelChange)="onActionChange(order, $event)"
               placeholder="⋯"
             />

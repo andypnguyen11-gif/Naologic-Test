@@ -26,6 +26,7 @@ export class WorkOrderPanel implements OnChanges {
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() order: WorkOrderDocument | null = null;
   @Input() defaultStartDate: string | null = null;
+  @Input() saveError: string | null = null;
   @Output() closePanel = new EventEmitter<void>();
   @Output() saveOrder = new EventEmitter<WorkOrderPanelSubmitEvent>();
 

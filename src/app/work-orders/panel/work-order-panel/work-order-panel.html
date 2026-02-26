@@ -37,6 +37,7 @@
         </div>
       </div>
       <p class="wo-field-error" *ngIf="showDateRangeError">End date must be on or after start date.</p>
+      <p class="wo-field-error" *ngIf="saveError">{{ saveError }}</p>
 
       <div class="wo-panel-actions">
         <button class="wo-btn secondary" type="button" (click)="onClose()">Cancel</button>

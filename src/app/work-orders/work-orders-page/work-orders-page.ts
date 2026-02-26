@@ -24,6 +24,7 @@ export class WorkOrdersPage implements OnInit {
   protected selectedOrder: WorkOrderDocument | null = null;
   protected pendingCreateStartDate: string | null = null;
   protected pendingCreateWorkCenterId: string | null = null;
+  protected panelSaveError: string | null = null;
 
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
@@ -46,6 +47,7 @@ export class WorkOrdersPage implements OnInit {
   protected onEditWorkOrder(order: WorkOrderDocument): void {
     this.selectedOrder = order;
     this.panelMode = 'edit';
+    this.panelSaveError = null;
     this.isPanelOpen = true;
   }
 
@@ -61,6 +63,7 @@ export class WorkOrdersPage implements OnInit {
     this.selectedOrder = null;
     this.pendingCreateStartDate = request.startDate;
     this.pendingCreateWorkCenterId = request.workCenterId;
+    this.panelSaveError = null;
     this.isPanelOpen = true;
   }
 
@@ -69,9 +72,22 @@ export class WorkOrdersPage implements OnInit {
     this.selectedOrder = null;
     this.pendingCreateStartDate = null;
     this.pendingCreateWorkCenterId = null;
+    this.panelSaveError = null;
   }
 
   protected onSaveOrder(event: WorkOrderPanelSubmitEvent): void {
+    const targetWorkCenterId =
+      event.mode === 'edit'
+        ? (this.selectedOrder?.data.workCenterId ?? '')
+        : (this.pendingCreateWorkCenterId ?? this.workCenters[0]?.docId ?? '');
+    const excludeOrderId = event.mode === 'edit' ? event.orderId : null;
+
+    if (this.hasOverlap(targetWorkCenterId, event.value.startDate, event.value.endDate, excludeOrderId)) {
+      this.panelSaveError = 'Dates overlap an existing work order on this work center.';
+      return;
+    }
+    this.panelSaveError = null;
+
     if (event.mode === 'edit' && event.orderId) {
       this.workOrders = this.workOrders.map((order) => {
         if (order.docId !== event.orderId) {
@@ -92,7 +108,7 @@ export class WorkOrdersPage implements OnInit {
       return;
     }
 
-    const fallbackWorkCenterId = this.pendingCreateWorkCenterId ?? this.workCenters[0]?.docId ?? '';
+    const fallbackWorkCenterId = targetWorkCenterId;
     const createdOrder: WorkOrderDocument = {
       docId: `wo-${Date.now()}`,
       docType: 'workOrder',
@@ -106,6 +122,35 @@ export class WorkOrdersPage implements OnInit {
     };
     this.workOrders = [...this.workOrders, createdOrder];
     this.onClosePanel();
+  }
+
+  private hasOverlap(
+    workCenterId: string,
+    startDate: string,
+    endDate: string,
+    excludeOrderId: string | null
+  ): boolean {
+    const nextStart = this.toUtcMillis(startDate);
+    const nextEnd = this.toUtcMillis(endDate);
+    if (Number.isNaN(nextStart) || Number.isNaN(nextEnd)) {
+      return false;
+    }
+
+    return this.workOrders.some((order) => {
+      if (order.data.workCenterId !== workCenterId) {
+        return false;
+      }
+      if (excludeOrderId && order.docId === excludeOrderId) {
+        return false;
+      }
+      const existingStart = this.toUtcMillis(order.data.startDate);
+      const existingEnd = this.toUtcMillis(order.data.endDate);
+      return nextStart <= existingEnd && nextEnd >= existingStart;
+    });
+  }
+
+  private toUtcMillis(dateString: string): number {
+    return new Date(`${dateString}T00:00:00Z`).getTime();
   }
 
   private buildTimeline(scale: Timescale): void {

@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 import { WorkOrdersService } from '../../services/work-orders.service';
@@ -7,7 +9,7 @@ import { WorkOrderPanel, WorkOrderPanelSubmitEvent } from '../panel/work-order-p
 
 @Component({
   selector: 'app-work-orders-page',
-  imports: [CommonModule, TimelineComponent, WorkOrderPanel],
+  imports: [CommonModule, FormsModule, NgSelectModule, TimelineComponent, WorkOrderPanel],
   templateUrl: './work-orders-page.html',
   styleUrl: './work-orders-page.scss',
   standalone: true
@@ -34,12 +36,10 @@ export class WorkOrdersPage implements OnInit {
     this.buildTimeline(this.selectedTimescale);
   }
 
-  protected onTimescaleChange(event: Event): void {
-    const target = event.target as HTMLSelectElement | null;
-    if (!target) {
+  protected onTimescaleChange(value: Timescale | null): void {
+    if (!value) {
       return;
     }
-    const value = target.value as Timescale;
     this.selectedTimescale = value;
     this.buildTimeline(value);
   }

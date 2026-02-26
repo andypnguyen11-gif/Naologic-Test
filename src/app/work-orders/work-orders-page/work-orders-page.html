@@ -5,11 +5,15 @@
     </div>
     <div class="wo-controls">
       <span class="wo-label">Timescale:</span>
-      <select class="wo-select" [value]="selectedTimescale" (change)="onTimescaleChange($event)">
-        <option *ngFor="let scale of timescales" [value]="scale" [selected]="scale === selectedTimescale">
-          {{ scale }}
-        </option>
-      </select>
+      <ng-select
+        class="wo-timescale-select"
+        [items]="timescales"
+        [ngModel]="selectedTimescale"
+        (ngModelChange)="onTimescaleChange($event)"
+        [clearable]="false"
+        [searchable]="false"
+        [ngModelOptions]="{ standalone: true }"
+      />
     </div>
   </header>
 

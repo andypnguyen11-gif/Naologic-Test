@@ -1,4 +1,4 @@
-<section class="wo-board" (click)="onSurfaceClick()">
+<section class="wo-board">
   <div class="wo-grid">
     <div class="wo-left">
       <div class="wo-left-header">Work Center</div>
@@ -32,34 +32,27 @@
             class="wo-bar"
             *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
             [style.gridColumn]="getGridColumn(order)"
+            [class.wo-bar-open]="openedActionOrderId === order.docId"
             (click)="$event.stopPropagation()"
           >
             <span class="wo-bar-title">{{ order.data.name }}</span>
             <span class="wo-bar-status" [attr.data-status]="order.data.status">
               {{ order.data.status }}
             </span>
-            <button
-              class="wo-bar-menu"
-              type="button"
-              aria-label="Work order actions"
-              (click)="toggleMenu(order.docId, $event)"
-            >
-              ⋯
-            </button>
-            <div
-              class="wo-action-menu"
-              *ngIf="activeMenuOrderId === order.docId"
-              (click)="$event.stopPropagation()"
-            >
-              <button type="button" class="wo-action-menu-item" (click)="onEditClick(order)">Edit</button>
-              <button
-                type="button"
-                class="wo-action-menu-item danger"
-                (click)="onDeleteClick(order)"
-              >
-                Delete
-              </button>
-            </div>
+            <ng-select
+              class="wo-bar-actions"
+              [items]="actionOptions"
+              bindLabel="label"
+              bindValue="value"
+              [clearable]="false"
+              [searchable]="false"
+              [ngModel]="getSelectedAction(order.docId)"
+              [ngModelOptions]="{ standalone: true }"
+              (open)="onActionOpen(order.docId)"
+              (close)="onActionClose(order.docId)"
+              (ngModelChange)="onActionChange(order, $event)"
+              placeholder="⋯"
+            />
           </div>
         </div>
       </div>

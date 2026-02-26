@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { WorkOrderDocument, WorkOrderStatus } from '../../../models/work-orders.models';
 
 export interface WorkOrderPanelSubmitEvent {
@@ -17,7 +18,7 @@ export interface WorkOrderPanelSubmitEvent {
 @Component({
   selector: 'app-work-order-panel',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule],
   templateUrl: './work-order-panel.html',
   styleUrl: './work-order-panel.scss',
 })

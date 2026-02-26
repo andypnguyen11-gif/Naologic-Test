@@ -2,7 +2,7 @@
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e6e8f3;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .wo-grid {
@@ -33,7 +33,7 @@
 .wo-right {
   position: relative;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
 }
 
 .wo-right-header {
@@ -107,6 +107,10 @@
   pointer-events: auto;
 }
 
+.wo-bar.wo-bar-open {
+  z-index: 40;
+}
+
 .wo-bar-title {
   font-size: 13px;
   color: #030929;
@@ -146,22 +150,35 @@
   color: #9b6b00;
 }
 
-.wo-bar-menu {
+:host ::ng-deep .wo-bar-actions {
   width: 16px;
+  min-width: 16px;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-select-container {
+  min-height: 16px;
   height: 16px;
-  border: none;
+  border: 0;
   background: transparent;
+  box-shadow: none;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-placeholder {
+  color: #6f4f58;
   font-size: 14px;
   line-height: 1;
-  color: #6f4f58;
-  cursor: pointer;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-arrow-wrapper {
+  display: none;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-value-container {
   padding: 0;
 }
 
-.wo-action-menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel {
+  z-index: 30;
   width: 200px;
   border-radius: 5px;
   border: 1px solid rgba(104, 71, 89, 0.1);
@@ -170,27 +187,23 @@
     0 4.5px 5px -1px #d9dcebab,
     0 2.5px 3px -1.5px #c8cfde;
   overflow: hidden;
-  z-index: 20;
 }
 
-.wo-action-menu-item {
-  width: 100%;
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option {
   height: 28px;
-  border: none;
-  background: transparent;
-  text-align: left;
+  line-height: 28px;
   padding: 0 12px;
   font-family: "Circular-Std", sans-serif;
   font-size: 14px;
   color: #2f3034;
-  cursor: pointer;
-
-  &:hover {
-    background: #f6f3f2;
-  }
+  background: #ffffff;
 }
 
-.wo-action-menu-item.danger {
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option.ng-option-marked {
+  background: #f6f3f2;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child {
   color: #e21a23;
   background: #f1f3f8;
 }

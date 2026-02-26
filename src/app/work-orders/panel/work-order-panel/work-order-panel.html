@@ -19,9 +19,15 @@
 
       <div class="wo-field">
         <label>Status</label>
-        <select formControlName="status" [class.invalid]="isFieldInvalid('status')">
-          <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
-        </select>
+        <ng-select
+          formControlName="status"
+          [items]="statusOptions"
+          bindLabel="label"
+          bindValue="value"
+          [clearable]="false"
+          [searchable]="false"
+          [ngClass]="{ 'ng-select-invalid': isFieldInvalid('status') }"
+        />
       </div>
 
       <div class="wo-field-row">

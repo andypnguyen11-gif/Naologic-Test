@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 
 export interface CreateWorkOrderRequest {
@@ -10,7 +12,7 @@ export interface CreateWorkOrderRequest {
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, NgSelectModule],
   templateUrl: './timeline.html',
   styleUrl: './timeline.scss'
 })
@@ -25,7 +27,12 @@ export class TimelineComponent implements OnChanges {
   @Output() createWorkOrder = new EventEmitter<CreateWorkOrderRequest>();
 
   private indexMap = new Map<string, number>();
-  protected activeMenuOrderId: string | null = null;
+  protected readonly actionOptions: ActionOption[] = [
+    { label: 'Edit', value: 'edit' },
+    { label: 'Delete', value: 'delete' }
+  ];
+  private selectedActionByOrderId: Record<string, ActionValue | null> = {};
+  protected openedActionOrderId: string | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['timelineDates'] || changes['timescaleLabel']) {
@@ -52,31 +59,46 @@ export class TimelineComponent implements OnChanges {
   }
 
   onEditClick(order: WorkOrderDocument): void {
-    this.activeMenuOrderId = null;
     this.editWorkOrder.emit(order);
   }
 
   onDeleteClick(order: WorkOrderDocument): void {
-    this.activeMenuOrderId = null;
     this.deleteWorkOrder.emit(order);
   }
 
-  toggleMenu(orderId: string, event: MouseEvent): void {
-    event.stopPropagation();
-    this.activeMenuOrderId = this.activeMenuOrderId === orderId ? null : orderId;
-  }
-
-  onSurfaceClick(): void {
-    this.activeMenuOrderId = null;
+  onActionChange(order: WorkOrderDocument, action: ActionValue | null): void {
+    if (!action) {
+      return;
+    }
+    if (action === 'edit') {
+      this.onEditClick(order);
+    } else {
+      this.onDeleteClick(order);
+    }
+    this.selectedActionByOrderId[order.docId] = null;
+    this.openedActionOrderId = null;
   }
 
   onTimelineCellClick(workCenterId: string, date: Date, event: MouseEvent): void {
     event.stopPropagation();
-    this.activeMenuOrderId = null;
     this.createWorkOrder.emit({
       workCenterId,
       startDate: this.formatDate(date)
     });
+  }
+
+  getSelectedAction(orderId: string): ActionValue | null {
+    return this.selectedActionByOrderId[orderId] ?? null;
+  }
+
+  onActionOpen(orderId: string): void {
+    this.openedActionOrderId = orderId;
+  }
+
+  onActionClose(orderId: string): void {
+    if (this.openedActionOrderId === orderId) {
+      this.openedActionOrderId = null;
+    }
   }
 
   private rebuildIndexMap(): void {
@@ -121,3 +143,9 @@ export class TimelineComponent implements OnChanges {
 }
 
 type Timescale = 'Hour' | 'Day' | 'Week' | 'Month';
+type ActionValue = 'edit' | 'delete';
+
+interface ActionOption {
+  label: string;
+  value: ActionValue;
+}

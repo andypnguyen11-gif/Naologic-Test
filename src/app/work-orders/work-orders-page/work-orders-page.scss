@@ -30,14 +30,36 @@
   color: #687196;
 }
 
-.wo-select {
-  height: 36px;
-  min-width: 120px;
+:host ::ng-deep .wo-timescale-select {
+  width: 86px;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-select-container {
+  min-height: 25px;
+  height: 25px;
+  border-radius: 5px;
+  border: 1px solid #f0d8ce;
+  background: #f6efeb;
+  box-shadow: none;
+  font-family: "Circular-Std", sans-serif;
+  font-size: 13px;
+  color: #684759;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-value-container {
+  padding-left: 8px;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-arrow-wrapper {
+  padding-right: 8px;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-arrow {
+  border-color: #6f4f58 transparent transparent;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-dropdown-panel {
+  border: 1px solid #e6e8f3;
   border-radius: 8px;
-  border: 1px solid #d6d8ff;
-  background: #ffffff;
-  color: #030929;
-  font-size: 14px;
-  text-align: left;
-  padding: 0 12px;
+  overflow: hidden;
 }

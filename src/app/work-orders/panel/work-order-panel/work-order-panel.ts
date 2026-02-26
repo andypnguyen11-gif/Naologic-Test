@@ -25,6 +25,7 @@ export class WorkOrderPanel implements OnChanges {
   @Input() open = false;
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() order: WorkOrderDocument | null = null;
+  @Input() defaultStartDate: string | null = null;
   @Output() closePanel = new EventEmitter<void>();
   @Output() saveOrder = new EventEmitter<WorkOrderPanelSubmitEvent>();
 
@@ -55,7 +56,7 @@ export class WorkOrderPanel implements OnChanges {
       return;
     }
 
-    if (this.open && (changes['mode'] || changes['order'])) {
+    if (this.open && (changes['mode'] || changes['order'] || changes['defaultStartDate'])) {
       this.resetFormFromInputs();
     }
   }
@@ -109,9 +110,11 @@ export class WorkOrderPanel implements OnChanges {
         endDate: this.order.data.endDate
       });
     } else {
-      const today = new Date();
-      const startDate = this.formatDate(today);
-      const end = new Date(today);
+      const baseStartDate = this.defaultStartDate ?? this.formatDate(new Date());
+      const startDate = this.isValidDateString(baseStartDate)
+        ? baseStartDate
+        : this.formatDate(new Date());
+      const end = this.parseDate(startDate);
       end.setDate(end.getDate() + 7);
       this.form.reset({
         name: '',
@@ -140,5 +143,14 @@ export class WorkOrderPanel implements OnChanges {
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private parseDate(dateString: string): Date {
+    return new Date(`${dateString}T00:00:00`);
+  }
+
+  private isValidDateString(dateString: string): boolean {
+    const parsed = this.parseDate(dateString);
+    return !Number.isNaN(parsed.getTime());
   }
 }

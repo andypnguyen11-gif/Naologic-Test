@@ -6,7 +6,9 @@
     <div class="wo-controls">
       <span class="wo-label">Timescale:</span>
       <select class="wo-select" [value]="selectedTimescale" (change)="onTimescaleChange($event)">
-        <option *ngFor="let scale of timescales" [value]="scale">{{ scale }}</option>
+        <option *ngFor="let scale of timescales" [value]="scale" [selected]="scale === selectedTimescale">
+          {{ scale }}
+        </option>
       </select>
     </div>
   </header>
@@ -17,6 +19,7 @@
     [workOrders]="workOrders"
     [timelineDates]="timelineDates"
     [timelineHeader]="timelineHeader"
+    (createWorkOrder)="onCreateWorkOrder($event)"
     (editWorkOrder)="onEditWorkOrder($event)"
     (deleteWorkOrder)="onDeleteWorkOrder($event)"
   />
@@ -25,6 +28,7 @@
     [open]="isPanelOpen"
     [mode]="panelMode"
     [order]="selectedOrder"
+    [defaultStartDate]="pendingCreateStartDate"
     (closePanel)="onClosePanel()"
     (saveOrder)="onSaveOrder($event)"
   />

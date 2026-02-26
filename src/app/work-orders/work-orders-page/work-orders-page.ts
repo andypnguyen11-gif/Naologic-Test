@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { TimelineComponent } from '../timeline/timeline';
+import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 import { WorkOrdersService } from '../../services/work-orders.service';
 import { WorkOrderPanel, WorkOrderPanelSubmitEvent } from '../panel/work-order-panel/work-order-panel';
@@ -22,6 +22,8 @@ export class WorkOrdersPage implements OnInit {
   protected isPanelOpen = false;
   protected panelMode: 'create' | 'edit' = 'create';
   protected selectedOrder: WorkOrderDocument | null = null;
+  protected pendingCreateStartDate: string | null = null;
+  protected pendingCreateWorkCenterId: string | null = null;
 
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
@@ -54,9 +56,19 @@ export class WorkOrdersPage implements OnInit {
     }
   }
 
+  protected onCreateWorkOrder(request: CreateWorkOrderRequest): void {
+    this.panelMode = 'create';
+    this.selectedOrder = null;
+    this.pendingCreateStartDate = request.startDate;
+    this.pendingCreateWorkCenterId = request.workCenterId;
+    this.isPanelOpen = true;
+  }
+
   protected onClosePanel(): void {
     this.isPanelOpen = false;
     this.selectedOrder = null;
+    this.pendingCreateStartDate = null;
+    this.pendingCreateWorkCenterId = null;
   }
 
   protected onSaveOrder(event: WorkOrderPanelSubmitEvent): void {
@@ -80,7 +92,7 @@ export class WorkOrdersPage implements OnInit {
       return;
     }
 
-    const fallbackWorkCenterId = this.workCenters[0]?.docId ?? '';
+    const fallbackWorkCenterId = this.pendingCreateWorkCenterId ?? this.workCenters[0]?.docId ?? '';
     const createdOrder: WorkOrderDocument = {
       docId: `wo-${Date.now()}`,
       docType: 'workOrder',

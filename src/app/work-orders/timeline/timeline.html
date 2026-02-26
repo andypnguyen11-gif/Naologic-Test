@@ -19,7 +19,13 @@
 
       <div class="wo-right-row" *ngFor="let wc of workCenters">
         <div class="wo-row-grid" [style.gridTemplateColumns]="gridTemplateColumns">
-          <div class="wo-time-cell" *ngFor="let cell of timelineHeader"></div>
+          <div
+            class="wo-time-cell"
+            *ngFor="let date of timelineDates"
+            (click)="onTimelineCellClick(wc.docId, date, $event)"
+          >
+            <span class="wo-add-tooltip">Click to add dates</span>
+          </div>
         </div>
         <div class="wo-row-overlay" [style.gridTemplateColumns]="gridTemplateColumns">
           <div

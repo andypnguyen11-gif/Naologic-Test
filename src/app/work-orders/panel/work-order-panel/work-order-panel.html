@@ -23,6 +23,7 @@
           formControlName="status"
           [items]="statusOptions"
           bindLabel="label"
+          bindValue="value"
           [clearable]="false"
           [searchable]="false"
           [ngClass]="{ 'ng-select-invalid': isFieldInvalid('status') }"

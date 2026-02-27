@@ -84,7 +84,7 @@ export class WorkOrderPanel implements OnChanges {
     this.form = this.formBuilder.group(
       {
         name: ['', [Validators.required]],
-        status: [this.statusOptions[0], [Validators.required]],
+        status: [this.statusOptions[0].value, [Validators.required]],
         startDate: [null as NgbDateStruct | null, [Validators.required]],
         endDate: [null as NgbDateStruct | null, [Validators.required]]
       },
@@ -172,7 +172,7 @@ export class WorkOrderPanel implements OnChanges {
       orderId: this.order?.docId ?? null,
       value: {
         name: formValue.name ?? '',
-        status: formValue.status?.value ?? 'open',
+        status: (formValue.status as WorkOrderStatus | null) ?? 'open',
         startDate,
         endDate
       }
@@ -183,7 +183,7 @@ export class WorkOrderPanel implements OnChanges {
     if (this.mode === 'edit' && this.order) {
       this.form.reset({
         name: this.order.data.name,
-        status: this.getStatusOption(this.order.data.status),
+        status: this.order.data.status,
         startDate: this.toDateStruct(this.order.data.startDate),
         endDate: this.toDateStruct(this.order.data.endDate)
       });
@@ -196,7 +196,7 @@ export class WorkOrderPanel implements OnChanges {
       end.setDate(end.getDate() + 7);
       this.form.reset({
         name: '',
-        status: this.statusOptions[0],
+        status: this.statusOptions[0].value,
         startDate: this.toDateStruct(startDate),
         endDate: this.toDateStruct(this.formatDate(end))
       });
@@ -259,9 +259,5 @@ export class WorkOrderPanel implements OnChanges {
       return a.month - b.month;
     }
     return a.day - b.day;
-  }
-
-  private getStatusOption(status: WorkOrderStatus): StatusOption {
-    return this.statusOptions.find((option) => option.value === status) ?? this.statusOptions[0];
   }
 }

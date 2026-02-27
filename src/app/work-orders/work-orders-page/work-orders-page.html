@@ -29,7 +29,8 @@
   />
 
   <app-work-order-panel
-    [open]="isPanelOpen"
+    *ngIf="isPanelOpen"
+    [open]="true"
     [mode]="panelMode"
     [order]="selectedOrder"
     [defaultStartDate]="pendingCreateStartDate"

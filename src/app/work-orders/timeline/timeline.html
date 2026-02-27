@@ -57,7 +57,16 @@
               (change)="onActionChange(order, $event)"
               (click)="$event.stopPropagation()"
               placeholder="⋯"
-            />
+            >
+              <ng-template ng-option-tmp let-item="item">
+                <span
+                  class="wo-action-option"
+                  [class.wo-action-option-delete]="item.value === 'delete'"
+                >
+                  {{ item.label }}
+                </span>
+              </ng-template>
+            </ng-select>
           </div>
         </div>
       </div>

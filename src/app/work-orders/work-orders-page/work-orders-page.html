@@ -1,10 +1,14 @@
 <div class="wo-page">
+  <div class="wo-brand">
+    <img src="/branding/logo/naologic-logo.png" alt="Naologic" />
+  </div>
+
   <header class="wo-header">
     <div class="wo-title">
       <h1>Work Orders</h1>
     </div>
-    <div class="wo-controls">
-      <span class="wo-label">Timescale:</span>
+    <div class="wo-timescale-control">
+      <span class="wo-label">Timescale</span>
       <ng-select
         class="wo-timescale-select"
         [items]="timescales"

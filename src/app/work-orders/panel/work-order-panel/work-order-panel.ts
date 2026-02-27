@@ -125,6 +125,13 @@ export class WorkOrderPanel implements OnChanges {
     return item.label;
   }
 
+  protected getStatusValue(item: StatusOption | WorkOrderStatus | null): WorkOrderStatus | '' {
+    if (!item) {
+      return '';
+    }
+    return typeof item === 'string' ? item : item.value;
+  }
+
   protected isFieldInvalid(fieldName: 'name' | 'status' | 'startDate' | 'endDate'): boolean {
     const field = this.form.get(fieldName);
     return !!field && field.invalid && (field.dirty || field.touched);

@@ -1,11 +1,20 @@
 <div class="wo-panel-overlay" *ngIf="open" (click)="onClose()">
   <aside class="wo-panel" (click)="$event.stopPropagation()">
     <header class="wo-panel-header">
-      <h2>{{ title }}</h2>
-      <button class="wo-panel-close" type="button" (click)="onClose()">Close</button>
+      <div class="wo-panel-heading">
+        <h2>{{ title }}</h2>
+        <p>Specify the dates, name and status for this order</p>
+      </div>
+      <div class="wo-panel-header-actions">
+        <button class="wo-btn secondary" type="button" (click)="onClose()">Cancel</button>
+        <button class="wo-btn primary" type="submit" form="work-order-form" *ngIf="mode === 'edit'; else createHeaderCta">Save</button>
+        <ng-template #createHeaderCta>
+          <button class="wo-btn primary" type="submit" form="work-order-form">Create</button>
+        </ng-template>
+      </div>
     </header>
 
-    <form class="wo-panel-body" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form id="work-order-form" class="wo-panel-body" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="wo-field">
         <label>Work Order Name</label>
         <input
@@ -29,7 +38,7 @@
           [ngClass]="{ 'ng-select-invalid': isFieldInvalid('status') }"
         >
           <ng-template ng-label-tmp let-item="item">
-            <span class="wo-status-label">{{ getStatusLabel(item) }}</span>
+            <span class="wo-status-pill" [attr.data-status]="getStatusValue(item)">{{ getStatusLabel(item) }}</span>
           </ng-template>
           <ng-template ng-option-tmp let-item="item">
             <span class="wo-status-option">{{ getStatusLabel(item) }}</span>
@@ -37,56 +46,47 @@
         </ng-select>
       </div>
 
-      <div class="wo-field-row">
-        <div class="wo-field">
-          <label>Start Date</label>
-          <input
-            type="text"
-            class="wo-date-control"
-            placeholder="mm.dd.yyyy"
-            formControlName="startDate"
-            ngbDatepicker
-            #startDatePicker="ngbDatepicker"
-            datepickerClass="wo-datepicker-popup"
-            [autoClose]="false"
-            [showWeekNumbers]="false"
-            [navigation]="'select'"
-            readonly
-            (click)="startDatePicker.open()"
-            (dateSelect)="startDatePicker.close()"
-          />
-          <p class="wo-field-error" *ngIf="isFieldInvalid('startDate')">Start date is required.</p>
-        </div>
-        <div class="wo-field">
-          <label>End Date</label>
-          <input
-            type="text"
-            class="wo-date-control"
-            placeholder="mm.dd.yyyy"
-            formControlName="endDate"
-            ngbDatepicker
-            #endDatePicker="ngbDatepicker"
-            datepickerClass="wo-datepicker-popup"
-            [autoClose]="false"
-            [showWeekNumbers]="false"
-            [navigation]="'select'"
-            readonly
-            (click)="endDatePicker.open()"
-            (dateSelect)="endDatePicker.close()"
-          />
-          <p class="wo-field-error" *ngIf="isFieldInvalid('endDate')">End date is required.</p>
-        </div>
+      <div class="wo-field">
+        <label>End date</label>
+        <input
+          type="text"
+          class="wo-date-control"
+          placeholder="mm.dd.yyyy"
+          formControlName="endDate"
+          ngbDatepicker
+          #endDatePicker="ngbDatepicker"
+          datepickerClass="wo-datepicker-popup"
+          [autoClose]="false"
+          [showWeekNumbers]="false"
+          [navigation]="'select'"
+          readonly
+          (click)="endDatePicker.open()"
+          (dateSelect)="endDatePicker.close()"
+        />
+        <p class="wo-field-error" *ngIf="isFieldInvalid('endDate')">End date is required.</p>
+      </div>
+
+      <div class="wo-field">
+        <label>Start date</label>
+        <input
+          type="text"
+          class="wo-date-control"
+          placeholder="mm.dd.yyyy"
+          formControlName="startDate"
+          ngbDatepicker
+          #startDatePicker="ngbDatepicker"
+          datepickerClass="wo-datepicker-popup"
+          [autoClose]="false"
+          [showWeekNumbers]="false"
+          [navigation]="'select'"
+          readonly
+          (click)="startDatePicker.open()"
+          (dateSelect)="startDatePicker.close()"
+        />
+        <p class="wo-field-error" *ngIf="isFieldInvalid('startDate')">Start date is required.</p>
       </div>
       <p class="wo-field-error" *ngIf="showDateRangeError">End date must be on or after start date.</p>
       <p class="wo-field-error" *ngIf="saveError">{{ saveError }}</p>
-
-      <div class="wo-panel-actions">
-        <button class="wo-btn secondary" type="button" (click)="onClose()">Cancel</button>
-        <button class="wo-btn primary" type="submit" *ngIf="mode === 'edit'; else createCta">Save</button>
-        <ng-template #createCta>
-          <button class="wo-btn primary" type="submit">Create</button>
-        </ng-template>
-      </div>
     </form>
   </aside>
 </div>

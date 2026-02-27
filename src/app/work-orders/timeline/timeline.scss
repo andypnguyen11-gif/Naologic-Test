@@ -208,9 +208,24 @@
   background: #f6f3f2;
 }
 
+:host ::ng-deep .wo-action-option {
+  color: #2f3034;
+}
+
+:host ::ng-deep .wo-action-option.wo-action-option-delete {
+  color: #4a60b2 !important;
+  font-weight: 500;
+}
+
 :host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child {
-  color: #e21a23;
-  background: #f1f3f8;
+  color: #4a60b2 !important;
+  background: #ffffff;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child.ng-option-marked,
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child.ng-option-marked .wo-action-option.wo-action-option-delete {
+  color: #4a60b2 !important;
+  background: #f6f3f2;
 }
 
 .wo-today-indicator {

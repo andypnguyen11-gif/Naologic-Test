@@ -6,10 +6,23 @@
   font-family: "Circular-Std", sans-serif;
 }
 
-.wo-header {
+.wo-brand {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  margin-bottom: 40px;
+
+  img {
+    display: block;
+    height: 14px;
+    width: auto;
+  }
+}
+
+.wo-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
   margin-bottom: 20px;
 
   h1 {
@@ -19,47 +32,70 @@
   }
 }
 
-.wo-controls {
+.wo-timescale-control {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  height: 20px;
+  border: 1px solid #e6e8f3;
+  border-radius: 5px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(3, 9, 41, 0.04);
 }
 
 .wo-label {
-  font-size: 13px;
-  color: #687196;
+  display: inline-flex;
+  align-items: center;
+  width: 75px;
+  height: 25px;
+  padding: 0 8px;
+  border-right: 1px solid #eef0ff;
+  border-radius: 5px 0 0 5px;
+  background-color: rgba(241, 243, 248, 0.75);
+  font-size: 10px;
+  font-weight: 500;
+  color: #99a1c0;
 }
 
 :host ::ng-deep .wo-timescale-select {
-  width: 86px;
+  width: 71px;
 }
 
 :host ::ng-deep .wo-timescale-select .ng-select-container {
   min-height: 25px;
   height: 25px;
-  border-radius: 5px;
-  border: 1px solid #f0d8ce;
-  background: #f6efeb;
+  border: 0;
+  border-radius: 0 5px 5px 0;
+  background: transparent;
   box-shadow: none;
   font-family: "Circular-Std", sans-serif;
-  font-size: 13px;
-  color: #684759;
+  font-size: 11px;
+  font-weight: 500;
+  color: #5b6cff;
 }
 
 :host ::ng-deep .wo-timescale-select .ng-value-container {
   padding-left: 8px;
+  padding-right: 0;
 }
 
 :host ::ng-deep .wo-timescale-select .ng-arrow-wrapper {
-  padding-right: 8px;
+  width: 14px;
+  padding-right: 6px;
 }
 
 :host ::ng-deep .wo-timescale-select .ng-arrow {
-  border-color: #6f4f58 transparent transparent;
+  border-width: 4px 4px 0;
+  border-color: #99a1c0 transparent transparent;
+  margin-top: 1px;
 }
 
 :host ::ng-deep .wo-timescale-select .ng-dropdown-panel {
   border: 1px solid #e6e8f3;
   border-radius: 8px;
   overflow: hidden;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-dropdown-panel .ng-option {
+  font-size: 12px;
+  color: #3f456b;
 }

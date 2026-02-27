@@ -21,29 +21,35 @@
 
 .wo-panel-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 28px;
 
   h2 {
     font-size: 18px;
-    margin: 0;
-    color: #030929;
+    margin: 0 0 6px;
+    color: #3f456b;
   }
 }
 
-.wo-panel-close {
-  border: none;
-  background: transparent;
-  color: #687196;
+.wo-panel-heading p {
+  margin: 0;
   font-size: 12px;
-  cursor: pointer;
+  line-height: 1.4;
+  color: #7f86a8;
+}
+
+.wo-panel-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .wo-panel-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .wo-field {
@@ -53,15 +59,16 @@
 
   label {
     font-size: 12px;
-    color: #687196;
+    font-weight: 500;
+    color: #7f86a8;
   }
 
   > input,
   > select {
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid #d6d8ff;
-    padding: 0 12px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid #d9deef;
+    padding: 0 10px;
     font-size: 14px;
     color: #030929;
     background: #ffffff;
@@ -79,9 +86,9 @@
 }
 
 :host ::ng-deep .wo-field ng-select .ng-select-container {
-  min-height: 40px;
-  border-radius: 10px;
-  border: 1px solid #d6d8ff;
+  min-height: 30px;
+  border-radius: 4px;
+  border: 1px solid #d9deef;
   background: #ffffff;
   font-family: "Circular-Std", sans-serif;
   font-size: 14px;
@@ -89,7 +96,7 @@
 }
 
 :host ::ng-deep .wo-field ng-select .ng-value-container {
-  padding-left: 12px;
+  padding-left: 10px;
 }
 
 :host ::ng-deep .wo-field ng-select .ng-value-label,
@@ -105,13 +112,46 @@
   background: transparent !important;
 }
 
-:host ::ng-deep .wo-status-label,
+.wo-status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  background: #d6d8ff;
+  color: #3e40db;
+}
+
+.wo-status-pill[data-status='open'] {
+  background: #d6f5ff;
+  color: #32b8e8;
+}
+
+.wo-status-pill[data-status='in-progress'] {
+  background: #d6d8ff;
+  color: #3e40db;
+}
+
+.wo-status-pill[data-status='complete'] {
+  background: #e1ffcc;
+  color: #2c7a2c;
+}
+
+.wo-status-pill[data-status='blocked'] {
+  background: #fceeb5;
+  color: #9b6b00;
+}
+
 :host ::ng-deep .wo-status-option {
   color: #030929;
 }
 
 :host ::ng-deep .wo-field ng-select .ng-arrow-wrapper {
-  padding-right: 12px;
+  padding-right: 10px;
 }
 
 :host ::ng-deep .wo-field ng-select.ng-select-focused .ng-select-container {
@@ -142,21 +182,8 @@
   color: #030929;
 }
 
-.wo-field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
 .wo-date-control {
   cursor: pointer;
-}
-
-.wo-panel-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 8px;
 }
 
 .wo-field-error {
@@ -166,12 +193,12 @@
 }
 
 .wo-btn {
-  height: 40px;
-  min-width: 72px;
-  padding: 0 18px;
-  border-radius: 10px;
-  border: none;
-  font-size: 13px;
+  height: 32px;
+  min-width: 62px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 12px;
   line-height: 1;
   font-family: "Circular-Std", sans-serif;
   font-weight: 500;
@@ -187,6 +214,7 @@
 }
 
 .wo-btn.secondary {
-  background: #f1f3f8;
-  color: #030929;
+  background: #ffffff;
+  border-color: #d9deef;
+  color: #687196;
 }

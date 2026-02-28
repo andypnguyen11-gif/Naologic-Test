@@ -156,7 +156,8 @@
 
 :host ::ng-deep .wo-field ng-select.ng-select-focused .ng-select-container {
   border-color: #3e40db;
-  box-shadow: none;
+  background: #f7f7ff;
+  box-shadow: 0 0 0 1px rgba(62, 64, 219, 0.2);
 }
 
 :host ::ng-deep .wo-field ng-select.ng-select-invalid .ng-select-container {
@@ -180,6 +181,11 @@
 :host ::ng-deep .wo-field .ng-dropdown-panel .ng-option.ng-option-marked {
   background: #f6f3f2;
   color: #030929;
+}
+
+:host ::ng-deep .wo-field .ng-dropdown-panel .ng-option.ng-option-selected,
+:host ::ng-deep .wo-field .ng-dropdown-panel .ng-option.ng-option-selected .wo-status-option {
+  color: #3e40db;
 }
 
 .wo-date-control {

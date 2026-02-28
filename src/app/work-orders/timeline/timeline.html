@@ -14,7 +14,25 @@
             {{ cell }}
           </div>
         </div>
-        <div class="wo-today-indicator" aria-hidden="true"></div>
+        <div
+          class="wo-current-period-header"
+          *ngIf="hasCurrentPeriod"
+          [style.gridTemplateColumns]="gridTemplateColumns"
+          aria-hidden="true"
+        >
+          <div class="wo-current-period-label" [style.gridColumn]="currentPeriodGridColumn">
+            <span>Current month</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="wo-current-period-line"
+        *ngIf="hasCurrentPeriod"
+        [style.gridTemplateColumns]="gridTemplateColumns"
+        aria-hidden="true"
+      >
+        <div class="wo-current-period-line-cell" [style.gridColumn]="currentPeriodGridColumn"></div>
       </div>
 
       <div

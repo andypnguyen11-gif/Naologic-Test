@@ -55,6 +55,54 @@
   white-space: nowrap;
 }
 
+.wo-current-period-header {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.wo-current-period-label {
+  position: relative;
+}
+
+.wo-current-period-label span {
+  position: absolute;
+  top: 48px;
+  left: 8px;
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #cfd2ff;
+  color: #3e40db;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.wo-current-period-line {
+  position: absolute;
+  top: 48px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wo-current-period-line-cell {
+  justify-self: start;
+  width: 3px;
+  height: 100%;
+  margin-left: -1px;
+  border-radius: 999px;
+  background: rgba(173, 180, 255, 0.7);
+}
+
 .wo-right-row {
   border-bottom: 1px solid #f1f3f8;
   position: relative;
@@ -226,17 +274,6 @@
 :host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child.ng-option-marked .wo-action-option.wo-action-option-delete {
   color: #4a60b2 !important;
   background: #f6f3f2;
-}
-
-.wo-today-indicator {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  background: #3e40db;
-  opacity: 0.6;
-  pointer-events: none;
 }
 
 .wo-add-tooltip {

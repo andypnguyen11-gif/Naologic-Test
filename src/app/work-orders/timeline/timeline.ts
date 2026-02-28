@@ -45,6 +45,18 @@ export class TimelineComponent implements OnChanges {
     return `repeat(${this.timelineHeader.length}, minmax(120px, 1fr))`;
   }
 
+  get hasCurrentPeriod(): boolean {
+    return this.currentPeriodIndex !== null;
+  }
+
+  get currentPeriodIndex(): number | null {
+    return this.getIndexForDate(new Date());
+  }
+
+  get currentPeriodGridColumn(): string | null {
+    return this.currentPeriodIndex !== null ? `${this.currentPeriodIndex + 1}` : null;
+  }
+
   getWorkOrdersForCenter(centerId: string): WorkOrderDocument[] {
     return this.workOrders.filter((order) => order.data.workCenterId === centerId);
   }

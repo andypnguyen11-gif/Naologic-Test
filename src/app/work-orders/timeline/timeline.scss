@@ -69,7 +69,7 @@
 
 .wo-current-period-label span {
   position: absolute;
-  top: 48px;
+  top: 50px;
   left: 8px;
   display: inline-flex;
   align-items: center;
@@ -85,31 +85,31 @@
 
 .wo-current-period-line {
   position: absolute;
-  top: 48px;
+  top: 50px;
   bottom: 0;
   left: 0;
   right: 0;
   display: grid;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
 .wo-current-period-line-cell {
   justify-self: start;
-  width: 3px;
+  width: 4px;
   height: 100%;
-  margin-left: -1px;
+  margin-left: -2px;
   border-radius: 999px;
-  background: rgba(173, 180, 255, 0.7);
+  background: rgba(173, 180, 255, 0.9);
 }
 
 .wo-right-row {
   border-bottom: 1px solid #f1f3f8;
   position: relative;
-  z-index: 0;
+  z-index: 1;
 
   &:hover {
-    background: #fafbfd;
+    background: rgba(238, 240, 255, 1);
   }
 }
 
@@ -131,15 +131,15 @@
 }
 
 .wo-row-grid .wo-time-cell:hover {
-  background: #f6efeb;
-  box-shadow: inset 0 0 0 1px #e4d7d0;
+  background-color: rgba(101, 112, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(195, 199, 255, 1);
   border-radius: 8px;
 }
 
 .wo-row-overlay {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   display: grid;
   align-items: center;
   pointer-events: none;
@@ -148,16 +148,27 @@
 
 .wo-bar {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   background: #e6edff;
   border-radius: 10px;
   padding: 6px 10px;
   height: 32px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: 0 6px 18px rgba(62, 64, 219, 0.1);
   pointer-events: auto;
+}
+
+.wo-bar[data-status='complete'] {
+  background: rgba(248, 255, 243, 1);
+  box-shadow: inset 0 0 0 1px rgba(209, 250, 179, 1);
+}
+
+.wo-bar[data-status='blocked'] {
+  background-color: rgba(255, 252, 241, 1);
+  box-shadow: inset 0 0 0 1px rgba(255, 245, 207, 1);
+  border-radius: 8px;
 }
 
 .wo-bar.wo-bar-open {
@@ -165,12 +176,22 @@
 }
 
 .wo-bar-title {
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 13px;
   color: #030929;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 160px;
+}
+
+.wo-bar-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+  flex: 0 0 auto;
 }
 
 .wo-bar-status {
@@ -194,12 +215,16 @@
 }
 
 .wo-bar-status[data-status='complete'] {
-  background: #e1ffcc;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 5px;
+  background: rgba(225, 255, 204, 1);
   color: #2c7a2c;
 }
 
 .wo-bar-status[data-status='blocked'] {
-  background: #fceeb5;
+  border-radius: 5px;
+  background-color: rgba(252, 238, 181, 1);
   color: #9b6b00;
 }
 
@@ -284,10 +309,10 @@
   width: 130px;
   height: 26px;
   border-radius: 8px;
-  background: #684759;
+  background-color: rgba(104, 113, 150, 1);
   box-shadow:
-    0 0 16px -8px #e6ebf0,
-    0 2px 4px -2px #c8cfde;
+    0 2px 4px -2px rgba(200, 207, 233, 1),
+    0 0 16px -8px rgba(230, 235, 240, 1);
   color: #fffaf9;
   font-family: "Circular-Std", sans-serif;
   font-size: 14px;

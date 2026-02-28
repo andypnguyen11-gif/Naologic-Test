@@ -54,37 +54,40 @@
             class="wo-bar"
             *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
             [style.gridColumn]="getGridColumn(order)"
+            [attr.data-status]="order.data.status"
             [class.wo-bar-open]="openedActionOrderId === order.docId"
             (click)="$event.stopPropagation()"
           >
             <span class="wo-bar-title">{{ order.data.name }}</span>
-            <span class="wo-bar-status" [attr.data-status]="order.data.status">
-              {{ order.data.status }}
+            <span class="wo-bar-meta">
+              <span class="wo-bar-status" [attr.data-status]="order.data.status">
+                {{ order.data.status }}
+              </span>
+              <ng-select
+                class="wo-bar-actions"
+                [items]="actionOptions"
+                bindLabel="label"
+                bindValue="value"
+                [clearable]="false"
+                [searchable]="false"
+                [ngModel]="getSelectedAction(order.docId)"
+                [ngModelOptions]="{ standalone: true }"
+                (open)="onActionOpen(order.docId, wc.docId)"
+                (close)="onActionClose(order.docId, wc.docId)"
+                (change)="onActionChange(order, $event)"
+                (click)="$event.stopPropagation()"
+                placeholder="⋯"
+              >
+                <ng-template ng-option-tmp let-item="item">
+                  <span
+                    class="wo-action-option"
+                    [class.wo-action-option-delete]="item.value === 'delete'"
+                  >
+                    {{ item.label }}
+                  </span>
+                </ng-template>
+              </ng-select>
             </span>
-            <ng-select
-              class="wo-bar-actions"
-              [items]="actionOptions"
-              bindLabel="label"
-              bindValue="value"
-              [clearable]="false"
-              [searchable]="false"
-              [ngModel]="getSelectedAction(order.docId)"
-              [ngModelOptions]="{ standalone: true }"
-              (open)="onActionOpen(order.docId, wc.docId)"
-              (close)="onActionClose(order.docId, wc.docId)"
-              (change)="onActionChange(order, $event)"
-              (click)="$event.stopPropagation()"
-              placeholder="⋯"
-            >
-              <ng-template ng-option-tmp let-item="item">
-                <span
-                  class="wo-action-option"
-                  [class.wo-action-option-delete]="item.value === 'delete'"
-                >
-                  {{ item.label }}
-                </span>
-              </ng-template>
-            </ng-select>
           </div>
         </div>
       </div>

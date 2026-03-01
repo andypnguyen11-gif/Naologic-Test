@@ -149,15 +149,25 @@
 .wo-bar {
   position: relative;
   z-index: 4;
-  background: #e6edff;
-  border-radius: 10px;
+  background: rgba(241, 244, 255, 1);
+  border-radius: 8px;
   padding: 6px 10px;
   height: 32px;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 6px 18px rgba(62, 64, 219, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(219, 224, 255, 1);
   pointer-events: auto;
+}
+
+.wo-bar[data-status='open'] {
+  background: rgba(242, 251, 255, 1);
+  box-shadow: inset 0 0 0 1px rgba(205, 241, 255, 1);
+}
+
+.wo-bar[data-status='in-progress'] {
+  background: rgba(241, 244, 255, 1);
+  box-shadow: inset 0 0 0 1px rgba(219, 224, 255, 1);
 }
 
 .wo-bar[data-status='complete'] {
@@ -195,18 +205,25 @@
 }
 
 .wo-bar-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
   font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
   text-transform: capitalize;
-  padding: 2px 8px;
-  border-radius: 999px;
+  padding: 0 10px;
+  border-radius: 5px;
   background: #d6d8ff;
   color: #3e40db;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .wo-bar-status[data-status='open'] {
-  background: #d6d8ff;
-  color: #3e40db;
+  background: #d6f5ff;
+  color: #32b8e8;
 }
 
 .wo-bar-status[data-status='in-progress'] {
@@ -215,15 +232,11 @@
 }
 
 .wo-bar-status[data-status='complete'] {
-  height: 22px;
-  padding: 0 10px;
-  border-radius: 5px;
   background: rgba(225, 255, 204, 1);
   color: #2c7a2c;
 }
 
 .wo-bar-status[data-status='blocked'] {
-  border-radius: 5px;
   background-color: rgba(252, 238, 181, 1);
   color: #9b6b00;
 }
@@ -231,6 +244,7 @@
 :host ::ng-deep .wo-bar-actions {
   width: 16px;
   min-width: 16px;
+  cursor: pointer;
 }
 
 :host ::ng-deep .wo-bar-actions .ng-select-container {
@@ -239,6 +253,7 @@
   border: 0;
   background: transparent;
   box-shadow: none;
+  cursor: pointer;
 }
 
 :host ::ng-deep .wo-bar-actions .ng-placeholder {

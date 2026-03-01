@@ -1,6 +1,6 @@
 .wo-page {
-  padding: 24px 32px 40px;
-  background: #f7f9fc;
+  padding: 18px 32px 40px;
+  background-color: rgba(255, 255, 255, 1);
   min-height: 100vh;
   color: #030929;
   font-family: "Circular-Std", sans-serif;
@@ -9,7 +9,7 @@
 .wo-brand {
   display: flex;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 
   img {
     display: block;
@@ -35,11 +35,12 @@
 .wo-timescale-control {
   display: inline-flex;
   align-items: center;
-  height: 20px;
+  height: 25px;
   border: 1px solid #e6e8f3;
   border-radius: 5px;
   background: #ffffff;
   box-shadow: 0 1px 2px rgba(3, 9, 41, 0.04);
+  overflow: hidden;
 }
 
 .wo-label {
@@ -79,14 +80,37 @@
 }
 
 :host ::ng-deep .wo-timescale-select .ng-arrow-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 14px;
+  height: 100%;
   padding-right: 6px;
+  position: relative;
+  overflow: visible;
 }
 
 :host ::ng-deep .wo-timescale-select .ng-arrow {
-  border-width: 4px 4px 0;
-  border-color: #99a1c0 transparent transparent;
-  margin-top: 1px;
+  width: 0;
+  height: 0;
+  border: 0 !important;
+}
+
+:host ::ng-deep .wo-timescale-select .ng-arrow-wrapper::after {
+  content: '';
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid rgba(200, 207, 233, 1);
+  border-bottom: 1.5px solid rgba(200, 207, 233, 1);
+  transform: translateY(-1px) rotate(45deg);
+  transform-origin: center;
+}
+
+:host ::ng-deep .wo-timescale-select.ng-select-opened .ng-arrow-wrapper::after {
+  border-right-color: #5b6cff;
+  border-bottom-color: #5b6cff;
+  transform: translateY(1px) rotate(225deg);
 }
 
 :host ::ng-deep .wo-timescale-select .ng-dropdown-panel {

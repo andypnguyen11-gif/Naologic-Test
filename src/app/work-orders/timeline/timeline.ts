@@ -35,6 +35,8 @@ export class TimelineComponent implements OnChanges {
   protected openedActionOrderId: string | null = null;
   protected openedActionWorkCenterId: string | null = null;
   protected hoveredWorkCenterId: string | null = null;
+  protected hoveredTimelineCellWorkCenterId: string | null = null;
+  protected hoveredTimelineCellGridColumn: string | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['timelineDates'] || changes['timescaleLabel']) {
@@ -106,6 +108,18 @@ export class TimelineComponent implements OnChanges {
       workCenterId,
       startDate: this.formatDate(date)
     });
+  }
+
+  onTimelineCellHover(workCenterId: string, date: Date | null): void {
+    if (!date) {
+      this.hoveredTimelineCellWorkCenterId = null;
+      this.hoveredTimelineCellGridColumn = null;
+      return;
+    }
+
+    const index = this.getIndexForDate(date);
+    this.hoveredTimelineCellWorkCenterId = workCenterId;
+    this.hoveredTimelineCellGridColumn = index !== null ? `${index + 1}` : null;
   }
 
   getSelectedAction(orderId: string): ActionValue | null {

@@ -45,45 +45,17 @@
   position: relative;
   overflow-x: auto;
   overflow-y: visible;
-  margin-top: -1px;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-.wo-right::before {
-  content: '';
-  position: absolute;
-  top: 48px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #eef0ff;
-  z-index: 5;
-  pointer-events: none;
 }
 
 .wo-right-header {
   position: relative;
-  border-top: 1px solid #eef0ff;
-  border-bottom: 1px solid #eef0ff;
   background-color: rgba(255, 255, 255, 1);
-  transform: translateZ(0);
-}
-
-.wo-right-header::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 1px;
-  background: #eef0ff;
-  z-index: 2;
-  pointer-events: none;
 }
 
 .wo-timescale {
   display: grid;
+  border-bottom: 1px solid #eef0ff;
+  min-width: max-content;
 }
 
 .wo-time-cell {
@@ -104,14 +76,10 @@
 
 .wo-current-period-header {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 0;
+  inset: 0;
   display: grid;
-  overflow: visible;
   pointer-events: none;
-  z-index: 4;
+  z-index: 3;
 }
 
 .wo-current-period-label {
@@ -120,8 +88,9 @@
 
 .wo-current-period-label span {
   position: absolute;
-  top: 1px;
-  left: -1.5px;
+  top: 47px;
+  left: 0;
+  transform: translateX(-2px);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -138,53 +107,32 @@
 
 .wo-current-period-line {
   position: absolute;
-  top: 48px;
-  bottom: 0;
+  top: 47px;
+  bottom: 36px;
   left: 0;
   right: 0;
   display: grid;
   pointer-events: none;
   z-index: 2;
-  transform: translateZ(0);
 }
 
 .wo-current-period-line-cell {
-  position: relative;
   justify-self: start;
-  width: 2.6667px;
+  width: 4px;
   height: 100%;
-  margin-left: -1.33335px;
+  margin-left: -2px;
   border-radius: 999px;
-  background: #d4d7ff;
-}
-
-.wo-current-period-line-cell::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 8px;
-  height: 2px;
-  transform: translateX(-50%);
   background: #d4d7ff;
 }
 
 .wo-right-row {
   height: 56px;
   position: relative;
+  min-width: max-content;
 
   &:hover {
     background: rgba(238, 240, 255, 1);
   }
-}
-
-.wo-right-row:first-of-type {
-  margin-top: -1px;
-}
-
-.wo-right-row:first-of-type .wo-row-grid,
-.wo-right-row:first-of-type .wo-row-overlay {
-  margin-top: -1px;
 }
 
 .wo-right-row.wo-right-row-open {
@@ -219,6 +167,18 @@
   align-items: center;
   pointer-events: none;
   padding: 0 12px;
+}
+
+.wo-row-tooltip-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  pointer-events: none;
+}
+
+.wo-row-tooltip-cell {
+  position: relative;
 }
 
 .wo-bar {
@@ -475,12 +435,6 @@
   line-height: 26px;
   text-align: center;
   white-space: nowrap;
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms ease;
-  z-index: 4;
-}
-
-.wo-row-grid .wo-time-cell:hover .wo-add-tooltip {
-  opacity: 1;
+  z-index: 90;
 }

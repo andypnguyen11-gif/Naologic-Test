@@ -19,8 +19,8 @@ export class WorkOrdersService {
         name: 'Extrude 6mm Sheet',
         workCenterId: 'wc-001',
         status: 'complete',
-        startDate: '2026-02-14',
-        endDate: '2026-02-18'
+        startDate: '2025-08-05',
+        endDate: '2025-10-18'
       }
     },
     {
@@ -30,8 +30,8 @@ export class WorkOrdersService {
         name: 'Extrude 12mm Sheet',
         workCenterId: 'wc-001',
         status: 'in-progress',
-        startDate: '2026-02-20',
-        endDate: '2026-02-27'
+        startDate: '2025-11-02',
+        endDate: '2026-01-24'
       }
     },
     {
@@ -41,8 +41,8 @@ export class WorkOrdersService {
         name: 'CNC Bracket Run',
         workCenterId: 'wc-002',
         status: 'open',
-        startDate: '2026-02-26',
-        endDate: '2026-03-02'
+        startDate: '2026-01-06',
+        endDate: '2026-02-22'
       }
     },
     {
@@ -52,8 +52,8 @@ export class WorkOrdersService {
         name: 'CNC Housing Batch',
         workCenterId: 'wc-002',
         status: 'blocked',
-        startDate: '2026-03-04',
-        endDate: '2026-03-08'
+        startDate: '2026-03-03',
+        endDate: '2026-04-28'
       }
     },
     {
@@ -63,8 +63,8 @@ export class WorkOrdersService {
         name: 'Final Assembly A',
         workCenterId: 'wc-003',
         status: 'open',
-        startDate: '2026-02-22',
-        endDate: '2026-02-28'
+        startDate: '2025-12-10',
+        endDate: '2026-02-05'
       }
     },
     {
@@ -74,8 +74,8 @@ export class WorkOrdersService {
         name: 'QC Incoming Lot',
         workCenterId: 'wc-004',
         status: 'in-progress',
-        startDate: '2026-02-24',
-        endDate: '2026-02-26'
+        startDate: '2025-11-20',
+        endDate: '2026-01-12'
       }
     },
     {
@@ -85,8 +85,8 @@ export class WorkOrdersService {
         name: 'QC Final Inspection',
         workCenterId: 'wc-004',
         status: 'blocked',
-        startDate: '2026-02-28',
-        endDate: '2026-03-05'
+        startDate: '2026-02-03',
+        endDate: '2026-03-18'
       }
     },
     {
@@ -96,8 +96,8 @@ export class WorkOrdersService {
         name: 'Pack Batch 71',
         workCenterId: 'wc-005',
         status: 'complete',
-        startDate: '2026-02-16',
-        endDate: '2026-02-19'
+        startDate: '2025-09-14',
+        endDate: '2025-11-08'
       }
     }
   ];

@@ -73,7 +73,9 @@
   left: 8px;
   display: inline-flex;
   align-items: center;
-  height: 28px;
+  justify-content: center;
+  width: 109px;
+  height: 22px;
   padding: 0 12px;
   border-radius: 8px;
   background: #cfd2ff;
@@ -151,23 +153,25 @@
   z-index: 4;
   background: rgba(241, 244, 255, 1);
   border-radius: 8px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   height: 32px;
   display: flex;
   align-items: center;
   gap: 8px;
   box-shadow: inset 0 0 0 1px rgba(219, 224, 255, 1);
   pointer-events: auto;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .wo-bar[data-status='open'] {
   background: rgba(242, 251, 255, 1);
-  box-shadow: inset 0 0 0 1px rgba(205, 241, 255, 1);
+  box-shadow: inset 0 0 0 1px rgba(196, 232, 249, 1);
 }
 
 .wo-bar[data-status='in-progress'] {
-  background: rgba(241, 244, 255, 1);
-  box-shadow: inset 0 0 0 1px rgba(219, 224, 255, 1);
+  background-color: rgba(237, 238, 255, 1);
+  box-shadow: inset 0 0 0 1px rgba(222, 224, 255, 1);
 }
 
 .wo-bar[data-status='complete'] {
@@ -183,6 +187,7 @@
 
 .wo-bar.wo-bar-open {
   z-index: 40;
+  overflow: visible;
 }
 
 .wo-bar-title {
@@ -202,6 +207,13 @@
   gap: 8px;
   margin-left: auto;
   flex: 0 0 auto;
+  min-width: 0;
+}
+
+.wo-bar:hover .wo-bar-actions,
+.wo-bar.wo-bar-open .wo-bar-actions {
+  opacity: 1;
+  visibility: visible;
 }
 
 .wo-bar-status {
@@ -242,22 +254,47 @@
 }
 
 :host ::ng-deep .wo-bar-actions {
-  width: 16px;
-  min-width: 16px;
+  width: 24px;
+  min-width: 24px;
+  flex: 0 0 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 120ms ease;
   cursor: pointer;
 }
 
 :host ::ng-deep .wo-bar-actions .ng-select-container {
-  min-height: 16px;
-  height: 16px;
+  min-height: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
   border: 0;
-  background: transparent;
+  border-radius: 5px;
+  background-color: rgba(241, 243, 248, 1);
   box-shadow: none;
   cursor: pointer;
 }
 
+:host ::ng-deep .wo-bar-actions.ng-select-opened .ng-select-container,
+:host ::ng-deep .wo-bar-actions.ng-select-focused .ng-select-container {
+  display: flex;
+  align-items: center;
+  border: 0;
+  border-radius: 5px;
+  background-color: rgba(241, 243, 248, 1);
+  box-shadow: none;
+}
+
 :host ::ng-deep .wo-bar-actions .ng-placeholder {
-  color: #6f4f58;
+  position: static !important;
+  inset: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  color: #99a1c0;
   font-size: 14px;
   line-height: 1;
 }
@@ -267,11 +304,32 @@
 }
 
 :host ::ng-deep .wo-bar-actions .ng-value-container {
+  display: flex;
+  align-items: center;
   padding: 0;
+  justify-content: center;
+  height: 22px;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-input {
+  display: none !important;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-value {
+  display: none !important;
+}
+
+:host ::ng-deep .wo-bar-actions.ng-select-opened .ng-select-container .ng-value-container .ng-placeholder,
+:host ::ng-deep .wo-bar-actions.ng-select-focused .ng-select-container .ng-value-container .ng-placeholder {
+  position: static !important;
+  inset: auto !important;
+  margin: 0 !important;
+  transform: none !important;
 }
 
 :host ::ng-deep .wo-bar-actions .ng-dropdown-panel {
   z-index: 30;
+  margin-top: 8px;
   width: 200px;
   border-radius: 5px;
   border: 1px solid rgba(104, 71, 89, 0.1);
@@ -293,6 +351,10 @@
 }
 
 :host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option.ng-option-marked {
+  background: #ffffff;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:hover {
   background: #f6f3f2;
 }
 
@@ -312,6 +374,12 @@
 
 :host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child.ng-option-marked,
 :host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child.ng-option-marked .wo-action-option.wo-action-option-delete {
+  color: #4a60b2 !important;
+  background: #ffffff;
+}
+
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child:hover,
+:host ::ng-deep .wo-bar-actions .ng-dropdown-panel .ng-option:last-child:hover .wo-action-option.wo-action-option-delete {
   color: #4a60b2 !important;
   background: #f6f3f2;
 }

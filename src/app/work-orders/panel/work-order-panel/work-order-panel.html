@@ -1,5 +1,5 @@
-<div class="wo-panel-overlay" *ngIf="open" (click)="onClose()">
-  <aside class="wo-panel" (click)="$event.stopPropagation()">
+<div class="wo-panel-overlay" *ngIf="shouldRender" [class.is-closing]="isClosing" (click)="onClose()">
+  <aside class="wo-panel" [class.is-closing]="isClosing" (click)="$event.stopPropagation()">
     <header class="wo-panel-header">
       <div class="wo-panel-heading">
         <h2>{{ title }}</h2>

@@ -59,6 +59,8 @@ class DotDateParserFormatter extends NgbDateParserFormatter {
   styleUrl: './work-order-panel.scss',
 })
 export class WorkOrderPanel implements OnChanges {
+  private readonly panelTransitionMs = 220;
+  private closeTimerId: ReturnType<typeof setTimeout> | null = null;
   @Input() open = false;
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() order: WorkOrderDocument | null = null;
@@ -77,6 +79,8 @@ export class WorkOrderPanel implements OnChanges {
   ];
 
   protected readonly form;
+  protected shouldRender = false;
+  protected isClosing = false;
   private readonly dateRangeValidator = (control: AbstractControl): ValidationErrors | null => {
     const startDate = control.get('startDate')?.value as NgbDateStruct | null;
     const endDate = control.get('endDate')?.value as NgbDateStruct | null;
@@ -102,6 +106,26 @@ export class WorkOrderPanel implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['open']) {
+      if (this.open) {
+        if (this.closeTimerId) {
+          clearTimeout(this.closeTimerId);
+          this.closeTimerId = null;
+        }
+        this.shouldRender = true;
+        this.isClosing = false;
+      } else if (this.shouldRender) {
+        this.isClosing = true;
+        this.closeTimerId = setTimeout(() => {
+          if (!this.open) {
+            this.shouldRender = false;
+            this.isClosing = false;
+          }
+          this.closeTimerId = null;
+        }, this.panelTransitionMs);
+      }
+    }
+
     if (!this.open) {
       return;
     }

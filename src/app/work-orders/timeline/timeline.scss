@@ -196,6 +196,14 @@
   pointer-events: auto;
   cursor: pointer;
   overflow: hidden;
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.wo-bar:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 1px rgba(219, 224, 255, 1),
+    0 6px 14px rgba(95, 108, 171, 0.12);
 }
 
 .wo-bar[data-status='open'] {

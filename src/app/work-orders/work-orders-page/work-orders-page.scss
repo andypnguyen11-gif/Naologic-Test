@@ -26,8 +26,14 @@
   margin-bottom: 20px;
 
   h1 {
+    width: 142px;
+    height: 34px;
+    color: rgba(3, 9, 41, 1);
+    font-family: CircularStd-Medium, "Circular-Std", sans-serif;
     font-size: 24px;
     font-weight: 500;
+    font-style: normal;
+    line-height: 34px;
     margin: 0;
   }
 }
@@ -36,10 +42,10 @@
   display: inline-flex;
   align-items: center;
   height: 25px;
-  border: 1px solid #e6e8f3;
+  border: 0;
   border-radius: 5px;
   background: #ffffff;
-  box-shadow: 0 1px 2px rgba(3, 9, 41, 0.04);
+  box-shadow: 0 6px 16px rgba(120, 133, 196, 0.18), 0 1px 2px rgba(3, 9, 41, 0.06);
   overflow: visible;
 }
 
@@ -49,7 +55,7 @@
   width: 75px;
   height: 25px;
   padding: 0 8px;
-  border-right: 1px solid #eef0ff;
+  border-right: 0;
   border-radius: 5px 0 0 5px;
   background-color: rgba(241, 243, 248, 0.75);
   font-size: 10px;

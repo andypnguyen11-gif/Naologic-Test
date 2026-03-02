@@ -34,6 +34,7 @@ export class TimelineComponent implements OnChanges {
   private selectedActionByOrderId: Record<string, ActionValue | null> = {};
   protected openedActionOrderId: string | null = null;
   protected openedActionWorkCenterId: string | null = null;
+  protected hoveredWorkCenterId: string | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['timelineDates'] || changes['timescaleLabel']) {
@@ -129,6 +130,14 @@ export class TimelineComponent implements OnChanges {
 
   isActionRowOpen(workCenterId: string): boolean {
     return this.openedActionWorkCenterId === workCenterId;
+  }
+
+  onRowHover(workCenterId: string | null): void {
+    this.hoveredWorkCenterId = workCenterId;
+  }
+
+  isRowHovered(workCenterId: string): boolean {
+    return this.hoveredWorkCenterId === workCenterId;
   }
 
   private rebuildIndexMap(): void {

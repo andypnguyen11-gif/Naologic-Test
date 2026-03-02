@@ -1,6 +1,5 @@
 .wo-board {
   background: #ffffff;
-  border-radius: 12px;
   border: 1px solid #e6e8f3;
   overflow: visible;
 }
@@ -17,29 +16,70 @@
 }
 
 .wo-left-header {
-  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 20px;
   font-size: 12px;
   color: #687196;
   border-bottom: 1px solid #eef0ff;
-  background: #fafbfd;
+  background-color: rgba(255, 255, 255, 1);
+  box-sizing: border-box;
 }
 
 .wo-left-row {
-  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 20px;
   border-bottom: 1px solid #f1f3f8;
   font-size: 14px;
+  box-sizing: border-box;
+}
+
+.wo-left-row.wo-left-row-hovered {
+  background-color: rgba(250, 251, 253, 1);
 }
 
 .wo-right {
   position: relative;
   overflow-x: auto;
   overflow-y: visible;
+  margin-top: -1px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.wo-right::before {
+  content: '';
+  position: absolute;
+  top: 48px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #eef0ff;
+  z-index: 5;
+  pointer-events: none;
 }
 
 .wo-right-header {
   position: relative;
+  border-top: 1px solid #eef0ff;
   border-bottom: 1px solid #eef0ff;
-  background: #fafbfd;
+  background-color: rgba(255, 255, 255, 1);
+  transform: translateZ(0);
+}
+
+.wo-right-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: #eef0ff;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .wo-timescale {
@@ -47,20 +87,31 @@
 }
 
 .wo-time-cell {
-  padding: 16px 12px;
+  padding: 0 12px;
   font-size: 12px;
   color: #687196;
   border-right: 1px solid #eef0ff;
-  min-height: 48px;
+  height: 48px;
+  box-sizing: border-box;
   white-space: nowrap;
+}
+
+.wo-right-header .wo-time-cell {
+  display: flex;
+  align-items: center;
+  height: 47px;
 }
 
 .wo-current-period-header {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
   display: grid;
+  overflow: visible;
   pointer-events: none;
-  z-index: 3;
+  z-index: 4;
 }
 
 .wo-current-period-label {
@@ -69,8 +120,8 @@
 
 .wo-current-period-label span {
   position: absolute;
-  top: 50px;
-  left: 8px;
+  top: 1px;
+  left: -1.5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -87,32 +138,53 @@
 
 .wo-current-period-line {
   position: absolute;
-  top: 50px;
+  top: 48px;
   bottom: 0;
   left: 0;
   right: 0;
   display: grid;
   pointer-events: none;
   z-index: 2;
+  transform: translateZ(0);
 }
 
 .wo-current-period-line-cell {
+  position: relative;
   justify-self: start;
-  width: 4px;
+  width: 2.6667px;
   height: 100%;
-  margin-left: -2px;
+  margin-left: -1.33335px;
   border-radius: 999px;
-  background: rgba(173, 180, 255, 0.9);
+  background: #d4d7ff;
+}
+
+.wo-current-period-line-cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 8px;
+  height: 2px;
+  transform: translateX(-50%);
+  background: #d4d7ff;
 }
 
 .wo-right-row {
-  border-bottom: 1px solid #f1f3f8;
+  height: 56px;
   position: relative;
-  z-index: 1;
 
   &:hover {
     background: rgba(238, 240, 255, 1);
   }
+}
+
+.wo-right-row:first-of-type {
+  margin-top: -1px;
+}
+
+.wo-right-row:first-of-type .wo-row-grid,
+.wo-right-row:first-of-type .wo-row-overlay {
+  margin-top: -1px;
 }
 
 .wo-right-row.wo-right-row-open {
@@ -123,11 +195,12 @@
   position: relative;
   z-index: 1;
   display: grid;
-  min-height: 56px;
+  height: 56px;
 }
 
 .wo-row-grid .wo-time-cell {
   position: relative;
+  height: 56px;
   cursor: pointer;
   transition: background-color 120ms ease, box-shadow 120ms ease;
 }

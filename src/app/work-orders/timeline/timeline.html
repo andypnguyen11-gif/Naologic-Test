@@ -48,6 +48,7 @@
       <div
         class="wo-right-row"
         *ngFor="let wc of workCenters"
+        [class.wo-right-row-first]="workCenters[0]?.docId === wc.docId"
         [class.wo-right-row-open]="isActionRowOpen(wc.docId)"
         (mouseenter)="onRowHover(wc.docId)"
         (mouseleave)="onRowHover(null)"
@@ -70,8 +71,22 @@
             [style.marginRight.%]="getBarEndInsetPercent(order)"
             [attr.data-status]="order.data.status"
             [class.wo-bar-open]="openedActionOrderId === order.docId"
+            (mouseenter)="onBarHover(order.docId, $event)"
+            (mousemove)="onBarHover(order.docId, $event)"
+            (mouseleave)="onBarLeave(order.docId)"
             (click)="$event.stopPropagation()"
           >
+            <div
+              class="wo-bar-tooltip"
+              role="tooltip"
+              [style.left]="getBarTooltipLeft(order.docId)"
+            >
+              <div class="wo-bar-tooltip-name">{{ order.data.name }}</div>
+              <div class="wo-bar-tooltip-meta">
+                <span class="wo-bar-tooltip-status">{{ getWorkOrderTooltipStatus(order) }}</span>
+                <span class="wo-bar-tooltip-dates">{{ getWorkOrderTooltipDateRange(order) }}</span>
+              </div>
+            </div>
             <span class="wo-bar-title">{{ order.data.name }}</span>
             <span class="wo-bar-meta">
               <span class="wo-bar-status" [attr.data-status]="order.data.status">

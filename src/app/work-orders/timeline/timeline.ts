@@ -39,6 +39,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   protected hoveredWorkCenterId: string | null = null;
   protected hoveredTimelineCellWorkCenterId: string | null = null;
   protected hoveredTimelineCellGridColumn: string | null = null;
+  protected hoveredBarTooltipOrderId: string | null = null;
+  protected hoveredBarTooltipLeftPx = 0;
 
   ngAfterViewInit(): void {
     this.scheduleScrollToCurrentPeriod();
@@ -101,6 +103,44 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     }
     const span = Math.max(1, visibleRange.end - visibleRange.start + 1);
     return ((1 - visibleRange.endOffset) / span) * 100;
+  }
+
+  getWorkOrderTooltipStatus(order: WorkOrderDocument): string {
+    return this.formatStatus(order.data.status);
+  }
+
+  getWorkOrderTooltipDateRange(order: WorkOrderDocument): string {
+    const start = this.parseStoredDate(order.data.startDate);
+    const end = this.parseStoredDate(order.data.endDate);
+    return `${this.formatTooltipDate(start)} - ${this.formatTooltipDate(end)}`;
+  }
+
+  getBarTooltipLeft(orderId: string): string {
+    if (this.hoveredBarTooltipOrderId === orderId) {
+      return `${this.hoveredBarTooltipLeftPx}px`;
+    }
+    return '50%';
+  }
+
+  onBarHover(orderId: string, event: MouseEvent): void {
+    const bar = event.currentTarget as HTMLElement | null;
+    if (!bar) {
+      return;
+    }
+
+    const rect = bar.getBoundingClientRect();
+    const minAnchor = 24;
+    const maxAnchor = Math.max(rect.width - 24, minAnchor);
+    const nextLeft = Math.min(Math.max(event.clientX - rect.left, minAnchor), maxAnchor);
+
+    this.hoveredBarTooltipOrderId = orderId;
+    this.hoveredBarTooltipLeftPx = nextLeft;
+  }
+
+  onBarLeave(orderId: string): void {
+    if (this.hoveredBarTooltipOrderId === orderId) {
+      this.hoveredBarTooltipOrderId = null;
+    }
   }
 
   onEditClick(order: WorkOrderDocument): void {
@@ -283,6 +323,21 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private formatStatus(status: WorkOrderDocument['data']['status']): string {
+    if (status === 'in-progress') {
+      return 'In Progress';
+    }
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  private formatTooltipDate(date: Date): string {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   }
 
   private parseStoredDate(dateString: string): Date {

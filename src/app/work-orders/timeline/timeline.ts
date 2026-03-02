@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
@@ -16,7 +16,7 @@ export interface CreateWorkOrderRequest {
   templateUrl: './timeline.html',
   styleUrl: './timeline.scss'
 })
-export class TimelineComponent implements OnChanges {
+export class TimelineComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) timescaleLabel: Timescale = 'Month';
   @Input({ required: true }) workCenters: WorkCenterDocument[] = [];
   @Input({ required: true }) timelineHeader: string[] = [];
@@ -25,6 +25,8 @@ export class TimelineComponent implements OnChanges {
   @Output() editWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() deleteWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() createWorkOrder = new EventEmitter<CreateWorkOrderRequest>();
+  @ViewChild('timelineScroller') private timelineScroller?: ElementRef<HTMLDivElement>;
+  @ViewChild('currentPeriodMarker') private currentPeriodMarker?: ElementRef<HTMLDivElement>;
 
   private indexMap = new Map<string, number>();
   protected readonly actionOptions: ActionOption[] = [
@@ -38,9 +40,14 @@ export class TimelineComponent implements OnChanges {
   protected hoveredTimelineCellWorkCenterId: string | null = null;
   protected hoveredTimelineCellGridColumn: string | null = null;
 
+  ngAfterViewInit(): void {
+    this.scheduleScrollToCurrentPeriod();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['timelineDates'] || changes['timescaleLabel']) {
       this.rebuildIndexMap();
+      this.scheduleScrollToCurrentPeriod();
     }
   }
 
@@ -61,17 +68,21 @@ export class TimelineComponent implements OnChanges {
   }
 
   getWorkOrdersForCenter(centerId: string): WorkOrderDocument[] {
-    return this.workOrders.filter((order) => order.data.workCenterId === centerId);
+    return this.workOrders.filter((order) => {
+      if (order.data.workCenterId !== centerId) {
+        return false;
+      }
+      return this.getVisibleRangeForOrder(order) !== null;
+    });
   }
 
   getGridColumn(order: WorkOrderDocument): string | null {
-    const start = this.getIndexForDate(new Date(order.data.startDate));
-    const end = this.getIndexForDate(new Date(order.data.endDate));
-    if (start === null || end === null) {
+    const visibleRange = this.getVisibleRangeForOrder(order);
+    if (!visibleRange) {
       return null;
     }
-    const safeEnd = Math.max(start, end);
-    return `${start + 1} / ${safeEnd + 2}`;
+    const safeEnd = Math.max(visibleRange.start, visibleRange.end);
+    return `${visibleRange.start + 1} / ${safeEnd + 2}`;
   }
 
   onEditClick(order: WorkOrderDocument): void {
@@ -165,26 +176,62 @@ export class TimelineComponent implements OnChanges {
     return this.indexMap.has(key) ? this.indexMap.get(key)! : null;
   }
 
-  private unitKey(date: Date): string {
-    const d = new Date(date);
-    if (this.timescaleLabel === 'Hour') {
-      d.setMinutes(0, 0, 0);
-      return d.toISOString();
+  private getVisibleRangeForOrder(order: WorkOrderDocument): { start: number; end: number } | null {
+    if (!this.timelineDates.length) {
+      return null;
     }
+
+    const firstVisible = this.timelineDates[0];
+    const lastVisible = this.timelineDates[this.timelineDates.length - 1];
+    const orderStart = new Date(order.data.startDate);
+    const orderEnd = new Date(order.data.endDate);
+
+    const normalizedVisibleStart = this.normalizeForTimescale(firstVisible);
+    const normalizedVisibleEnd = this.normalizeForTimescale(lastVisible);
+    const normalizedOrderStart = this.normalizeForTimescale(orderStart);
+    const normalizedOrderEnd = this.normalizeForTimescale(orderEnd);
+
+    if (normalizedOrderEnd < normalizedVisibleStart || normalizedOrderStart > normalizedVisibleEnd) {
+      return null;
+    }
+
+    const clippedStart = normalizedOrderStart < normalizedVisibleStart
+      ? normalizedVisibleStart
+      : normalizedOrderStart;
+    const clippedEnd = normalizedOrderEnd > normalizedVisibleEnd
+      ? normalizedVisibleEnd
+      : normalizedOrderEnd;
+
+    const start = this.getIndexForDate(clippedStart);
+    const end = this.getIndexForDate(clippedEnd);
+    if (start === null || end === null) {
+      return null;
+    }
+
+    return { start, end };
+  }
+
+  private unitKey(date: Date): string {
+    const d = this.normalizeForTimescale(date);
+    return d.toISOString();
+  }
+
+  private normalizeForTimescale(date: Date): Date {
+    const d = new Date(date);
     if (this.timescaleLabel === 'Day') {
       d.setHours(0, 0, 0, 0);
-      return d.toISOString();
+      return d;
     }
     if (this.timescaleLabel === 'Week') {
       const day = d.getDay();
       const diff = (day + 6) % 7;
       d.setDate(d.getDate() - diff);
       d.setHours(0, 0, 0, 0);
-      return d.toISOString();
+      return d;
     }
     d.setDate(1);
     d.setHours(0, 0, 0, 0);
-    return d.toISOString();
+    return d;
   }
 
   private formatDate(date: Date): string {
@@ -203,9 +250,27 @@ export class TimelineComponent implements OnChanges {
     }
     return selection.value;
   }
+
+  private scheduleScrollToCurrentPeriod(): void {
+    queueMicrotask(() => {
+      requestAnimationFrame(() => this.scrollToCurrentPeriod());
+    });
+  }
+
+  private scrollToCurrentPeriod(): void {
+    const scroller = this.timelineScroller?.nativeElement;
+    const marker = this.currentPeriodMarker?.nativeElement;
+    if (!scroller || !marker) {
+      return;
+    }
+
+    const targetLeft = marker.offsetLeft - (scroller.clientWidth / 2) + (marker.offsetWidth / 2);
+    const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    scroller.scrollLeft = Math.min(Math.max(0, targetLeft), maxScrollLeft);
+  }
 }
 
-type Timescale = 'Hour' | 'Day' | 'Week' | 'Month';
+type Timescale = 'Day' | 'Week' | 'Month';
 type ActionValue = 'edit' | 'delete';
 type ActionSelection = ActionValue | ActionOption;
 

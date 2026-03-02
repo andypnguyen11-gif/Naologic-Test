@@ -15,8 +15,8 @@ import { WorkOrderPanel, WorkOrderPanelSubmitEvent } from '../panel/work-order-p
   standalone: true
 })
 export class WorkOrdersPage implements OnInit {
-  protected readonly timescales: Timescale[] = ['Hour', 'Day', 'Week', 'Month'];
-  protected selectedTimescale: Timescale = 'Month';
+  protected readonly timescales: Timescale[] = ['Day', 'Week', 'Month'];
+  protected selectedTimescale: Timescale = 'Day';
   protected workCenters: WorkCenterDocument[] = [];
   protected workOrders: WorkOrderDocument[] = [];
   protected timelineHeader: string[] = [];
@@ -164,17 +164,9 @@ export class WorkOrdersPage implements OnInit {
   }
 
   private buildTimeline(scale: Timescale): void {
-    const today = new Date();
-    if (scale === 'Hour') {
-      this.timelineDates = this.buildHourRange(today, 12);
-      this.timelineHeader = this.timelineDates.map((date) =>
-        date.toLocaleTimeString('en-US', { hour: 'numeric' })
-      );
-      return;
-    }
-
+    const { start, end } = this.getWorkOrderDateBounds();
     if (scale === 'Day') {
-      this.timelineDates = this.buildDayRange(today, 14);
+      this.timelineDates = this.buildDayRange(start, end, 14);
       this.timelineHeader = this.timelineDates.map((date) =>
         date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       );
@@ -182,57 +174,85 @@ export class WorkOrdersPage implements OnInit {
     }
 
     if (scale === 'Week') {
-      this.timelineDates = this.buildWeekRange(today, 6);
+      this.timelineDates = this.buildWeekRange(start, end, 2);
       this.timelineHeader = this.timelineDates.map((date) =>
         `Wk ${this.getWeekNumber(date)}`
       );
       return;
     }
 
-    this.timelineDates = this.buildMonthRange(today, 6);
+    this.timelineDates = this.buildMonthRange(start, end, 2);
     this.timelineHeader = this.timelineDates.map((date) =>
       date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     );
   }
 
-  private buildDayRange(center: Date, daysAround: number): Date[] {
+  private buildDayRange(start: Date, end: Date, paddingDays: number): Date[] {
     const dates: Date[] = [];
-    for (let offset = -daysAround; offset <= daysAround; offset += 1) {
-      const d = new Date(center);
-      d.setDate(d.getDate() + offset);
-      dates.push(d);
+    const first = new Date(start);
+    first.setDate(first.getDate() - paddingDays);
+    first.setHours(0, 0, 0, 0);
+
+    const last = new Date(end);
+    last.setDate(last.getDate() + paddingDays);
+    last.setHours(0, 0, 0, 0);
+
+    for (const d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
+      dates.push(new Date(d));
     }
     return dates;
   }
 
-  private buildHourRange(center: Date, hoursAround: number): Date[] {
+  private buildWeekRange(start: Date, end: Date, paddingWeeks: number): Date[] {
     const dates: Date[] = [];
-    for (let offset = -hoursAround; offset <= hoursAround; offset += 1) {
-      const d = new Date(center);
-      d.setHours(d.getHours() + offset, 0, 0, 0);
-      dates.push(d);
+    const first = this.startOfWeek(start);
+    first.setDate(first.getDate() - (paddingWeeks * 7));
+
+    const last = this.startOfWeek(end);
+    last.setDate(last.getDate() + (paddingWeeks * 7));
+
+    for (const d = new Date(first); d <= last; d.setDate(d.getDate() + 7)) {
+      dates.push(new Date(d));
     }
     return dates;
   }
 
-  private buildWeekRange(center: Date, weeksAround: number): Date[] {
-    const start = this.startOfWeek(center);
+  private buildMonthRange(start: Date, end: Date, paddingMonths: number): Date[] {
     const dates: Date[] = [];
-    for (let offset = -weeksAround; offset <= weeksAround; offset += 1) {
-      const d = new Date(start);
-      d.setDate(d.getDate() + offset * 7);
-      dates.push(d);
+    const first = new Date(start.getFullYear(), start.getMonth() - paddingMonths, 1);
+    const last = new Date(end.getFullYear(), end.getMonth() + paddingMonths, 1);
+
+    for (
+      const d = new Date(first.getFullYear(), first.getMonth(), 1);
+      d <= last;
+      d.setMonth(d.getMonth() + 1)
+    ) {
+      dates.push(new Date(d));
     }
     return dates;
   }
 
-  private buildMonthRange(center: Date, monthsAround: number): Date[] {
-    const dates: Date[] = [];
-    for (let offset = -monthsAround; offset <= monthsAround; offset += 1) {
-      const d = new Date(center.getFullYear(), center.getMonth() + offset, 1);
-      dates.push(d);
+  private getWorkOrderDateBounds(): { start: Date; end: Date } {
+    if (!this.workOrders.length) {
+      const today = new Date();
+      return { start: today, end: today };
     }
-    return dates;
+
+    let earliest = new Date(this.workOrders[0].data.startDate);
+    let latest = new Date(this.workOrders[0].data.endDate);
+
+    for (const order of this.workOrders) {
+      const orderStart = new Date(order.data.startDate);
+      const orderEnd = new Date(order.data.endDate);
+      if (orderStart < earliest) {
+        earliest = orderStart;
+      }
+      if (orderEnd > latest) {
+        latest = orderEnd;
+      }
+    }
+
+    return { start: earliest, end: latest };
   }
 
   private startOfWeek(date: Date): Date {
@@ -253,4 +273,4 @@ export class WorkOrdersPage implements OnInit {
   }
 }
 
-type Timescale = 'Hour' | 'Day' | 'Week' | 'Month';
+type Timescale = 'Day' | 'Week' | 'Month';

@@ -77,6 +77,15 @@ export class WorkOrderPanel implements OnChanges {
   ];
 
   protected readonly form;
+  private readonly dateRangeValidator = (control: AbstractControl): ValidationErrors | null => {
+    const startDate = control.get('startDate')?.value as NgbDateStruct | null;
+    const endDate = control.get('endDate')?.value as NgbDateStruct | null;
+    if (!startDate || !endDate) {
+      return null;
+    }
+
+    return this.compareDateStruct(startDate, endDate) <= 0 ? null : { dateRange: true };
+  };
 
   constructor(
     private readonly formBuilder: FormBuilder
@@ -211,16 +220,6 @@ export class WorkOrderPanel implements OnChanges {
 
     this.form.markAsPristine();
     this.form.markAsUntouched();
-  }
-
-  private dateRangeValidator(control: AbstractControl): ValidationErrors | null {
-    const startDate = control.get('startDate')?.value as NgbDateStruct | null;
-    const endDate = control.get('endDate')?.value as NgbDateStruct | null;
-    if (!startDate || !endDate) {
-      return null;
-    }
-
-    return this.compareDateStruct(startDate, endDate) <= 0 ? null : { dateRange: true };
   }
 
   private formatDate(date: Date): string {

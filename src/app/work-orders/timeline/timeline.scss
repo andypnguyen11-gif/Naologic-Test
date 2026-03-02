@@ -79,7 +79,7 @@
   inset: 0;
   display: grid;
   pointer-events: none;
-  z-index: 3;
+  z-index: 6;
 }
 
 .wo-current-period-label {
@@ -113,7 +113,7 @@
   right: 0;
   display: grid;
   pointer-events: none;
-  z-index: 2;
+  z-index: 5;
 }
 
 .wo-current-period-line-cell {
@@ -186,6 +186,7 @@
   z-index: 4;
   background: rgba(241, 244, 255, 1);
   border-radius: 8px;
+  min-width: 40px;
   padding: 6px 12px;
   height: 32px;
   display: flex;

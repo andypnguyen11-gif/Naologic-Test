@@ -60,6 +60,7 @@ export class WorkOrdersPage implements OnInit {
 
   protected onDeleteWorkOrder(order: WorkOrderDocument): void {
     this.workOrders = this.workOrders.filter((item) => item.docId !== order.docId);
+    this.workOrdersService.saveWorkOrders(this.workOrders);
     if (this.selectedOrder?.docId === order.docId) {
       this.onClosePanel();
     }
@@ -91,6 +92,13 @@ export class WorkOrdersPage implements OnInit {
         ? (this.selectedOrder?.data.workCenterId ?? '')
         : (this.pendingCreateWorkCenterId ?? this.workCenters[0]?.docId ?? '');
     const excludeOrderId = event.mode === 'edit' ? event.orderId : null;
+    const nextStart = this.toUtcMillis(event.value.startDate);
+    const nextEnd = this.toUtcMillis(event.value.endDate);
+
+    if (Number.isNaN(nextStart) || Number.isNaN(nextEnd) || nextStart > nextEnd) {
+      this.panelSaveError = 'End date must be on or after start date.';
+      return;
+    }
 
     if (this.hasOverlap(targetWorkCenterId, event.value.startDate, event.value.endDate, excludeOrderId)) {
       this.panelSaveError = 'Dates overlap an existing work order on this work center.';
@@ -114,6 +122,7 @@ export class WorkOrdersPage implements OnInit {
           }
         };
       });
+      this.workOrdersService.saveWorkOrders(this.workOrders);
       this.onClosePanel();
       return;
     }
@@ -131,6 +140,7 @@ export class WorkOrdersPage implements OnInit {
       }
     };
     this.workOrders = [...this.workOrders, createdOrder];
+    this.workOrdersService.saveWorkOrders(this.workOrders);
     this.onClosePanel();
   }
 
@@ -238,12 +248,12 @@ export class WorkOrdersPage implements OnInit {
       return { start: today, end: today };
     }
 
-    let earliest = new Date(this.workOrders[0].data.startDate);
-    let latest = new Date(this.workOrders[0].data.endDate);
+    let earliest = this.parseStoredDate(this.workOrders[0].data.startDate);
+    let latest = this.parseStoredDate(this.workOrders[0].data.endDate);
 
     for (const order of this.workOrders) {
-      const orderStart = new Date(order.data.startDate);
-      const orderEnd = new Date(order.data.endDate);
+      const orderStart = this.parseStoredDate(order.data.startDate);
+      const orderEnd = this.parseStoredDate(order.data.endDate);
       if (orderStart < earliest) {
         earliest = orderStart;
       }
@@ -270,6 +280,11 @@ export class WorkOrdersPage implements OnInit {
     d.setUTCDate(d.getUTCDate() + 4 - dayNum);
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  }
+
+  private parseStoredDate(dateString: string): Date {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, (month || 1) - 1, day || 1);
   }
 }
 

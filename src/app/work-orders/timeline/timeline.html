@@ -66,6 +66,8 @@
             class="wo-bar"
             *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
             [style.gridColumn]="getGridColumn(order)"
+            [style.marginLeft.%]="getBarStartInsetPercent(order)"
+            [style.marginRight.%]="getBarEndInsetPercent(order)"
             [attr.data-status]="order.data.status"
             [class.wo-bar-open]="openedActionOrderId === order.docId"
             (click)="$event.stopPropagation()"

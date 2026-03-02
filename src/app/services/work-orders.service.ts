@@ -3,6 +3,7 @@ import { WorkCenterDocument, WorkOrderDocument } from '../models/work-orders.mod
 
 @Injectable({ providedIn: 'root' })
 export class WorkOrdersService {
+  private readonly storageKey = 'naologic.work-orders';
   private readonly workCenters: WorkCenterDocument[] = [
     { docId: 'wc-001', docType: 'workCenter', data: { name: 'Extrusion Line A' } },
     { docId: 'wc-002', docType: 'workCenter', data: { name: 'CNC Machine 1' } },
@@ -11,7 +12,7 @@ export class WorkOrdersService {
     { docId: 'wc-005', docType: 'workCenter', data: { name: 'Packaging Line' } }
   ];
 
-  private readonly workOrders: WorkOrderDocument[] = [
+  private readonly defaultWorkOrders: WorkOrderDocument[] = [
     {
       docId: 'wo-001',
       docType: 'workOrder',
@@ -107,6 +108,44 @@ export class WorkOrdersService {
   }
 
   getWorkOrders(): WorkOrderDocument[] {
-    return [...this.workOrders];
+    return [...this.readWorkOrders()];
+  }
+
+  saveWorkOrders(workOrders: WorkOrderDocument[]): void {
+    this.writeWorkOrders(workOrders);
+  }
+
+  private readWorkOrders(): WorkOrderDocument[] {
+    const storage = this.getStorage();
+    if (!storage) {
+      return [...this.defaultWorkOrders];
+    }
+
+    const raw = storage.getItem(this.storageKey);
+    if (!raw) {
+      return [...this.defaultWorkOrders];
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        return [...this.defaultWorkOrders];
+      }
+      return parsed as WorkOrderDocument[];
+    } catch {
+      return [...this.defaultWorkOrders];
+    }
+  }
+
+  private writeWorkOrders(workOrders: WorkOrderDocument[]): void {
+    const storage = this.getStorage();
+    if (!storage) {
+      return;
+    }
+    storage.setItem(this.storageKey, JSON.stringify(workOrders));
+  }
+
+  private getStorage(): Storage | null {
+    return typeof localStorage === 'undefined' ? null : localStorage;
   }
 }

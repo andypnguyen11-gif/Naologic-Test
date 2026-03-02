@@ -85,6 +85,24 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     return `${visibleRange.start + 1} / ${safeEnd + 2}`;
   }
 
+  getBarStartInsetPercent(order: WorkOrderDocument): number {
+    const visibleRange = this.getVisibleRangeForOrder(order);
+    if (!visibleRange) {
+      return 0;
+    }
+    const span = Math.max(1, visibleRange.end - visibleRange.start + 1);
+    return (visibleRange.startOffset / span) * 100;
+  }
+
+  getBarEndInsetPercent(order: WorkOrderDocument): number {
+    const visibleRange = this.getVisibleRangeForOrder(order);
+    if (!visibleRange) {
+      return 0;
+    }
+    const span = Math.max(1, visibleRange.end - visibleRange.start + 1);
+    return ((1 - visibleRange.endOffset) / span) * 100;
+  }
+
   onEditClick(order: WorkOrderDocument): void {
     this.editWorkOrder.emit(order);
   }
@@ -176,15 +194,15 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     return this.indexMap.has(key) ? this.indexMap.get(key)! : null;
   }
 
-  private getVisibleRangeForOrder(order: WorkOrderDocument): { start: number; end: number } | null {
+  private getVisibleRangeForOrder(order: WorkOrderDocument): VisibleRange | null {
     if (!this.timelineDates.length) {
       return null;
     }
 
     const firstVisible = this.timelineDates[0];
     const lastVisible = this.timelineDates[this.timelineDates.length - 1];
-    const orderStart = new Date(order.data.startDate);
-    const orderEnd = new Date(order.data.endDate);
+    const orderStart = this.parseStoredDate(order.data.startDate);
+    const orderEnd = this.parseStoredDate(order.data.endDate);
 
     const normalizedVisibleStart = this.normalizeForTimescale(firstVisible);
     const normalizedVisibleEnd = this.normalizeForTimescale(lastVisible);
@@ -208,7 +226,16 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
       return null;
     }
 
-    return { start, end };
+    return {
+      start,
+      end,
+      startOffset: normalizedOrderStart < normalizedVisibleStart
+        ? 0
+        : this.getPositionWithinUnit(orderStart),
+      endOffset: normalizedOrderEnd > normalizedVisibleEnd
+        ? 1
+        : this.getPositionWithinUnit(orderEnd)
+    };
   }
 
   private unitKey(date: Date): string {
@@ -234,11 +261,33 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     return d;
   }
 
+  private getPositionWithinUnit(date: Date): number {
+    if (this.timescaleLabel === 'Day') {
+      return 0;
+    }
+
+    if (this.timescaleLabel === 'Week') {
+      const day = (date.getDay() + 6) % 7;
+      return day / 6;
+    }
+
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    if (daysInMonth <= 1) {
+      return 0;
+    }
+    return (date.getDate() - 1) / (daysInMonth - 1);
+  }
+
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const day = `${date.getDate()}`.padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private parseStoredDate(dateString: string): Date {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, (month || 1) - 1, day || 1);
   }
 
   private resolveAction(selection: ActionSelection | null): ActionValue | null {
@@ -277,4 +326,11 @@ type ActionSelection = ActionValue | ActionOption;
 interface ActionOption {
   label: string;
   value: ActionValue;
+}
+
+interface VisibleRange {
+  start: number;
+  end: number;
+  startOffset: number;
+  endOffset: number;
 }

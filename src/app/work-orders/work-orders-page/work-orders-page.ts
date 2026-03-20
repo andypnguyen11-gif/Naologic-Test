@@ -95,6 +95,8 @@ export class WorkOrdersPage implements OnInit {
     const nextStart = this.toUtcMillis(event.value.startDate);
     const nextEnd = this.toUtcMillis(event.value.endDate);
 
+    // Keep a second guard here even though the panel validates dates, so invalid
+    // values cannot be persisted through any future UI or programmatic path.
     if (Number.isNaN(nextStart) || Number.isNaN(nextEnd) || nextStart > nextEnd) {
       this.panelSaveError = 'End date must be on or after start date.';
       return;
@@ -165,6 +167,7 @@ export class WorkOrdersPage implements OnInit {
       }
       const existingStart = this.toUtcMillis(order.data.startDate);
       const existingEnd = this.toUtcMillis(order.data.endDate);
+      // Inclusive comparison prevents back-dated collisions inside the same work center.
       return nextStart <= existingEnd && nextEnd >= existingStart;
     });
   }
@@ -248,6 +251,8 @@ export class WorkOrdersPage implements OnInit {
       return { start: today, end: today };
     }
 
+    // Build the rendered range from the actual work-order bounds so users can
+    // scroll to the earliest and latest scheduled items in the sample data.
     let earliest = this.parseStoredDate(this.workOrders[0].data.startDate);
     let latest = this.parseStoredDate(this.workOrders[0].data.endDate);
 
@@ -283,6 +288,7 @@ export class WorkOrdersPage implements OnInit {
   }
 
   private parseStoredDate(dateString: string): Date {
+    // Use local calendar parsing instead of Date(string) to avoid timezone drift.
     const [year, month, day] = dateString.split('-').map(Number);
     return new Date(year, (month || 1) - 1, day || 1);
   }

@@ -81,6 +81,8 @@ export class WorkOrderPanel implements OnChanges {
   protected readonly form;
   protected shouldRender = false;
   protected isClosing = false;
+  // Keep the validator as an arrow function so it preserves component context
+  // when Angular executes it from the form group configuration.
   private readonly dateRangeValidator = (control: AbstractControl): ValidationErrors | null => {
     const startDate = control.get('startDate')?.value as NgbDateStruct | null;
     const endDate = control.get('endDate')?.value as NgbDateStruct | null;
@@ -115,6 +117,7 @@ export class WorkOrderPanel implements OnChanges {
         this.shouldRender = true;
         this.isClosing = false;
       } else if (this.shouldRender) {
+        // Keep the panel mounted briefly so the slide/fade exit animation can finish.
         this.isClosing = true;
         this.closeTimerId = setTimeout(() => {
           if (!this.open) {
@@ -186,6 +189,8 @@ export class WorkOrderPanel implements OnChanges {
     if (target.closest('.wo-datepicker-popup') || target.closest('.wo-date-control')) {
       return;
     }
+    // Datepickers are managed separately from the panel so outside clicks close
+    // just the calendars without interfering with the drawer itself.
     this.startDatePicker?.close();
     this.endDatePicker?.close();
   }
@@ -228,6 +233,8 @@ export class WorkOrderPanel implements OnChanges {
         endDate: this.toDateStruct(this.order.data.endDate)
       });
     } else {
+      // Create mode starts from the clicked timeline date when available, then
+      // defaults the end date one week later to match the exercise behavior.
       const baseStartDate = this.defaultStartDate ?? this.formatDate(new Date());
       const startDate = this.isValidDateString(baseStartDate)
         ? baseStartDate
@@ -282,6 +289,8 @@ export class WorkOrderPanel implements OnChanges {
   }
 
   private compareDateStruct(a: NgbDateStruct, b: NgbDateStruct): number {
+    // Compare calendar parts directly so validation stays independent of browser
+    // timezone parsing and matches the datepicker's local date semantics.
     if (a.year !== b.year) {
       return a.year - b.year;
     }

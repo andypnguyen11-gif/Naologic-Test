@@ -83,6 +83,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     if (!visibleRange) {
       return null;
     }
+    // CSS grid end lines are exclusive, so add one more column to cover the
+    // last visible unit occupied by the work order.
     const safeEnd = Math.max(visibleRange.start, visibleRange.end);
     return `${visibleRange.start + 1} / ${safeEnd + 2}`;
   }
@@ -92,6 +94,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     if (!visibleRange) {
       return 0;
     }
+    // Convert the fractional start position inside the first visible unit into
+    // a percentage so the bar can start partway through a week/month column.
     const span = Math.max(1, visibleRange.end - visibleRange.start + 1);
     return (visibleRange.startOffset / span) * 100;
   }
@@ -101,6 +105,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     if (!visibleRange) {
       return 0;
     }
+    // The right inset uses the unused portion of the last visible unit so the
+    // bar can end partway through the final week/month column.
     const span = Math.max(1, visibleRange.end - visibleRange.start + 1);
     return ((1 - visibleRange.endOffset) / span) * 100;
   }
@@ -224,6 +230,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   }
 
   private rebuildIndexMap(): void {
+    // Normalize the rendered timeline units once so bar placement can do fast
+    // lookups instead of rescanning the header for every work order.
     this.indexMap = new Map(
       this.timelineDates.map((date, index) => [this.unitKey(date), index])
     );
@@ -253,6 +261,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
       return null;
     }
 
+    // Bars can start before or end after the rendered window, so clip them first
+    // and then use offsets to preserve the partial position inside the edge cell.
     const clippedStart = normalizedOrderStart < normalizedVisibleStart
       ? normalizedVisibleStart
       : normalizedOrderStart;
@@ -279,6 +289,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   }
 
   private unitKey(date: Date): string {
+    // Every lookup key is normalized to the active timescale so the same date
+    // maps correctly in Day, Week, and Month views.
     const d = this.normalizeForTimescale(date);
     return d.toISOString();
   }
@@ -307,10 +319,13 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     }
 
     if (this.timescaleLabel === 'Week') {
+      // Convert Sunday-based JS dates to a Monday-based fraction for the week column.
       const day = (date.getDay() + 6) % 7;
       return day / 6;
     }
 
+    // Month view uses a fractional position so bars can begin/end inside the month cell
+    // instead of snapping to the full column width.
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     if (daysInMonth <= 1) {
       return 0;
@@ -341,6 +356,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   }
 
   private parseStoredDate(dateString: string): Date {
+    // Parse as a calendar date in local time to avoid UTC parsing shifting the
+    // work order into the previous day or month for some time zones.
     const [year, month, day] = dateString.split('-').map(Number);
     return new Date(year, (month || 1) - 1, day || 1);
   }
@@ -356,6 +373,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   }
 
   private scheduleScrollToCurrentPeriod(): void {
+    // Wait for Angular to render the updated grid before measuring marker and
+    // scroller positions for the initial/current-period centering.
     queueMicrotask(() => {
       requestAnimationFrame(() => this.scrollToCurrentPeriod());
     });

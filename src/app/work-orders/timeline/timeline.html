@@ -15,7 +15,7 @@
 
     <div class="wo-right" #timelineScroller>
       <div class="wo-right-header">
-        <div class="wo-timescale" [style.gridTemplateColumns]="gridTemplateColumns">
+        <div class="wo-timescale" #timescaleGrid [style.gridTemplateColumns]="gridTemplateColumns">
           <div class="wo-time-cell" *ngFor="let cell of timelineHeader">
             {{ cell }}
           </div>
@@ -40,7 +40,6 @@
       >
         <div
           class="wo-current-period-line-cell"
-          #currentPeriodMarker
           [style.gridColumn]="currentPeriodGridColumn"
         ></div>
       </div>

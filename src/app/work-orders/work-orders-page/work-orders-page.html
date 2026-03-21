@@ -7,17 +7,27 @@
     <div class="wo-title">
       <h1>Work Orders</h1>
     </div>
-    <div class="wo-timescale-control">
-      <span class="wo-label">Timescale</span>
-      <ng-select
-        class="wo-timescale-select"
-        [items]="timescales"
-        [ngModel]="selectedTimescale"
-        (ngModelChange)="onTimescaleChange($event)"
-        [clearable]="false"
-        [searchable]="false"
-        [ngModelOptions]="{ standalone: true }"
-      />
+    <div class="wo-header-row">
+      <div class="wo-timescale-control">
+        <span class="wo-label">Timescale</span>
+        <ng-select
+          class="wo-timescale-select"
+          [items]="timescales"
+          [ngModel]="selectedTimescale"
+          (ngModelChange)="onTimescaleChange($event)"
+          [clearable]="false"
+          [searchable]="false"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <button
+        class="wo-today-button"
+        type="button"
+        (click)="onTodayClick()"
+        [disabled]="!canScrollToToday"
+      >
+        Today
+      </button>
     </div>
   </header>
 

@@ -1,4 +1,5 @@
 .wo-board {
+  position: relative;
   background: #ffffff;
   border: 1px solid #e6e8f3;
   overflow: visible;
@@ -57,6 +58,7 @@
   border-bottom: 1px solid #eef0ff;
   min-width: max-content;
 }
+
 
 .wo-time-cell {
   padding: 0 12px;

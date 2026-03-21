@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
@@ -27,6 +27,11 @@ export class WorkOrdersPage implements OnInit {
   protected pendingCreateStartDate: string | null = null;
   protected pendingCreateWorkCenterId: string | null = null;
   protected panelSaveError: string | null = null;
+  @ViewChild(TimelineComponent) private timeline?: TimelineComponent;
+
+  protected get canScrollToToday(): boolean {
+    return this.timeline?.hasCurrentPeriod ?? false;
+  }
 
   constructor(
     private readonly workOrdersService: WorkOrdersService,
@@ -46,6 +51,10 @@ export class WorkOrdersPage implements OnInit {
     }
     this.selectedTimescale = value;
     this.buildTimeline(value);
+  }
+
+  protected onTodayClick(): void {
+    this.timeline?.scrollToToday();
   }
 
   protected onEditWorkOrder(order: WorkOrderDocument): void {

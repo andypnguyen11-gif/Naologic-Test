@@ -26,7 +26,7 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   @Output() deleteWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() createWorkOrder = new EventEmitter<CreateWorkOrderRequest>();
   @ViewChild('timelineScroller') private timelineScroller?: ElementRef<HTMLDivElement>;
-  @ViewChild('currentPeriodMarker') private currentPeriodMarker?: ElementRef<HTMLDivElement>;
+  @ViewChild('timescaleGrid') private timescaleGrid?: ElementRef<HTMLDivElement>;
 
   private indexMap = new Map<string, number>();
   protected readonly actionOptions: ActionOption[] = [
@@ -381,13 +381,31 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   }
 
   private scrollToCurrentPeriod(): void {
-    const scroller = this.timelineScroller?.nativeElement;
-    const marker = this.currentPeriodMarker?.nativeElement;
-    if (!scroller || !marker) {
+    this.scrollToToday();
+  }
+
+  scrollToToday(): void {
+    this.scrollToDate(new Date());
+  }
+
+  private scrollToDate(date: Date): void {
+    const index = this.getIndexForDate(date);
+    if (index === null) {
       return;
     }
 
-    const targetLeft = marker.offsetLeft - (scroller.clientWidth / 2) + (marker.offsetWidth / 2);
+    const scroller = this.timelineScroller?.nativeElement;
+    const grid = this.timescaleGrid?.nativeElement;
+    if (!scroller || !grid) {
+      return;
+    }
+
+    const cell = grid.children.item(index) as HTMLElement | null;
+    if (!cell) {
+      return;
+    }
+
+    const targetLeft = cell.offsetLeft - (scroller.clientWidth / 2) + (cell.offsetWidth / 2);
     const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
     scroller.scrollLeft = Math.min(Math.max(0, targetLeft), maxScrollLeft);
   }

@@ -9,5 +9,5 @@ import { WorkOrdersPage } from './work-orders/work-orders-page/work-orders-page'
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('naologic');
+  protected readonly title = signal('Naologic-Frontend');
 }

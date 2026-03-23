@@ -1,6 +1,6 @@
-# Naologic Work Order Timeline
+# Naologic-Frontend
 
-Angular application for the Naologic work order schedule timeline take-home exercise. The app renders work orders across manufacturing work centers, supports Day/Week/Month views, and includes create, edit, delete, overlap validation, and timeline interactions.
+Angular frontend application for the Naologic work order schedule timeline take-home exercise. The app renders work orders across manufacturing work centers, supports Day/Week/Month views, and includes create, edit, delete, overlap validation, and timeline interactions.
 
 ## How To Run
 

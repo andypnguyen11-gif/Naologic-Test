@@ -1,0 +1,13 @@
+@use "../auth-shell.scss";
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 840px) {
+  .auth-row {
+    grid-template-columns: 1fr;
+  }
+}

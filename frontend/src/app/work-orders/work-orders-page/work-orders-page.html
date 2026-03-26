@@ -1,12 +1,25 @@
 <div class="wo-page">
-  <div class="wo-brand">
-    <img src="/branding/logo/naologic-logo.png" alt="Naologic" />
+  <div class="wo-brand-row">
+    <div class="wo-brand">
+      <img src="/branding/logo/naologic-logo.png" alt="Naologic" />
+    </div>
+    <button class="wo-signout-button" type="button" (click)="onLogout()">
+      Sign out
+    </button>
   </div>
 
   <header class="wo-header">
     <div class="wo-title">
       <h1>Work Orders</h1>
+      @if (currentUser) {
+        <p class="wo-user-meta">
+          {{ currentUser.firstName }} {{ currentUser.lastName }} · {{ currentUser.role }}
+        </p>
+      }
     </div>
+  </header>
+
+  <div class="wo-toolbar">
     <div class="wo-header-row">
       <div class="wo-timescale-control">
         <span class="wo-label">Timescale</span>
@@ -29,7 +42,7 @@
         Today
       </button>
     </div>
-  </header>
+  </div>
 
   @if (isLoading) {
     <p>Loading work orders...</p>
@@ -46,6 +59,7 @@
       [workOrders]="workOrders"
       [timelineDates]="timelineDates"
       [timelineHeader]="timelineHeader"
+      [allowEditing]="canManageWorkOrders"
       (createWorkOrder)="onCreateWorkOrder($event)"
       (editWorkOrder)="onEditWorkOrder($event)"
       (deleteWorkOrder)="onDeleteWorkOrder($event)"

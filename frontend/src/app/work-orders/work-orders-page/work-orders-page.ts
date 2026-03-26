@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angula
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
 import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 import { WorkOrdersService } from '../../services/work-orders.service';
@@ -36,8 +37,17 @@ export class WorkOrdersPage implements OnInit {
     return this.timeline?.hasCurrentPeriod ?? false;
   }
 
+  protected get currentUser() {
+    return this.authService.currentUser();
+  }
+
+  protected get canManageWorkOrders(): boolean {
+    return this.authService.canManageWorkOrders();
+  }
+
   constructor(
     private readonly workOrdersService: WorkOrdersService,
+    private readonly authService: AuthService,
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef
   ) {}
@@ -69,6 +79,10 @@ export class WorkOrdersPage implements OnInit {
   }
 
   protected async onDeleteWorkOrder(order: WorkOrderDocument): Promise<void> {
+    if (!this.canManageWorkOrders) {
+      return;
+    }
+
     try {
       await firstValueFrom(this.workOrdersService.deleteWorkOrder(order.docId));
       this.workOrders = this.workOrders.filter((item) => item.docId !== order.docId);
@@ -83,6 +97,10 @@ export class WorkOrdersPage implements OnInit {
   }
 
   protected onCreateWorkOrder(request: CreateWorkOrderRequest): void {
+    if (!this.canManageWorkOrders) {
+      return;
+    }
+
     this.ngZone.run(() => {
       this.panelMode = 'create';
       this.selectedOrder = null;
@@ -103,6 +121,11 @@ export class WorkOrdersPage implements OnInit {
   }
 
   protected async onSaveOrder(event: WorkOrderPanelSubmitEvent): Promise<void> {
+    if (!this.canManageWorkOrders) {
+      this.panelSaveError = 'Your role does not allow editing work orders.';
+      return;
+    }
+
     const targetWorkCenterId =
       event.mode === 'edit'
         ? (this.selectedOrder?.data.workCenterId ?? '')
@@ -170,6 +193,10 @@ export class WorkOrdersPage implements OnInit {
     } catch {
       this.panelSaveError = 'Unable to create the work order. Check that the API is running.';
     }
+  }
+
+  protected onLogout(): void {
+    this.authService.logout();
   }
 
   private async loadPageData(): Promise<void> {

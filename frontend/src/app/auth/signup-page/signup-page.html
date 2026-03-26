@@ -1,0 +1,55 @@
+<section class="auth-shell">
+  <div class="auth-panel">
+    <div class="auth-copy">
+      <span class="auth-kicker">Naologic</span>
+      <h1>Create your workspace access.</h1>
+      <p>New accounts start as Viewer users by default. Admins can promote access later.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="auth-row">
+        <label class="auth-field">
+          <span>First name</span>
+          <input type="text" formControlName="firstName" placeholder="Andy" />
+        </label>
+
+        <label class="auth-field">
+          <span>Last name</span>
+          <input type="text" formControlName="lastName" placeholder="Nguyen" />
+        </label>
+      </div>
+
+      <label class="auth-field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="you@company.com" />
+      </label>
+
+      <label class="auth-field">
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="At least 8 characters" />
+      </label>
+
+      <label class="auth-field">
+        <span>Confirm password</span>
+        <input type="password" formControlName="confirmPassword" placeholder="Re-enter password" />
+      </label>
+
+      @if (form.errors?.['passwordMismatch']) {
+        <p class="auth-error">Passwords must match.</p>
+      }
+
+      @if (errorMessage) {
+        <p class="auth-error">{{ errorMessage }}</p>
+      }
+
+      <button class="auth-submit" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+      </button>
+
+      <p class="auth-link-row">
+        Already have an account?
+        <a routerLink="/login">Sign in</a>
+      </p>
+    </form>
+  </div>
+</section>

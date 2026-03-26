@@ -1,0 +1,34 @@
+<section class="auth-shell">
+  <div class="auth-panel">
+    <div class="auth-copy">
+      <span class="auth-kicker">Naologic</span>
+      <h1>Sign in to your scheduling workspace.</h1>
+      <p>Use your account to access work orders, timeline views, and role-based editing controls.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <label class="auth-field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="you@company.com" />
+      </label>
+
+      <label class="auth-field">
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="Enter password" />
+      </label>
+
+      @if (errorMessage) {
+        <p class="auth-error">{{ errorMessage }}</p>
+      }
+
+      <button class="auth-submit" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+      </button>
+
+      <p class="auth-link-row">
+        Need an account?
+        <a routerLink="/signup">Create one</a>
+      </p>
+    </form>
+  </div>
+</section>

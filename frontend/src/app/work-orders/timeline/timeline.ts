@@ -22,6 +22,7 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) timelineHeader: string[] = [];
   @Input({ required: true }) timelineDates: Date[] = [];
   @Input({ required: true }) workOrders: WorkOrderDocument[] = [];
+  @Input() allowEditing = true;
   @Output() editWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() deleteWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() createWorkOrder = new EventEmitter<CreateWorkOrderRequest>();
@@ -158,6 +159,10 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   }
 
   onActionChange(order: WorkOrderDocument, selection: ActionSelection | null): void {
+    if (!this.allowEditing) {
+      return;
+    }
+
     const action = this.resolveAction(selection);
     if (!action) {
       return;
@@ -179,6 +184,10 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
 
   onTimelineCellClick(workCenterId: string, date: Date, event: MouseEvent): void {
     event.stopPropagation();
+    if (!this.allowEditing) {
+      return;
+    }
+
     this.createWorkOrder.emit({
       workCenterId,
       startDate: this.formatDate(date)

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { firstValueFrom } from 'rxjs';
 import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
 import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
 import { WorkOrdersService } from '../../services/work-orders.service';
@@ -22,10 +23,12 @@ export class WorkOrdersPage implements OnInit {
   protected timelineHeader: string[] = [];
   protected timelineDates: Date[] = [];
   protected isPanelOpen = false;
+  protected isLoading = true;
   protected panelMode: 'create' | 'edit' = 'create';
   protected selectedOrder: WorkOrderDocument | null = null;
   protected pendingCreateStartDate: string | null = null;
   protected pendingCreateWorkCenterId: string | null = null;
+  protected loadError: string | null = null;
   protected panelSaveError: string | null = null;
   @ViewChild(TimelineComponent) private timeline?: TimelineComponent;
 
@@ -39,10 +42,8 @@ export class WorkOrdersPage implements OnInit {
     private readonly cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.workCenters = this.workOrdersService.getWorkCenters();
-    this.workOrders = this.workOrdersService.getWorkOrders();
-    this.buildTimeline(this.selectedTimescale);
+  async ngOnInit(): Promise<void> {
+    await this.loadPageData();
   }
 
   protected onTimescaleChange(value: Timescale | null): void {
@@ -67,11 +68,17 @@ export class WorkOrdersPage implements OnInit {
     });
   }
 
-  protected onDeleteWorkOrder(order: WorkOrderDocument): void {
-    this.workOrders = this.workOrders.filter((item) => item.docId !== order.docId);
-    this.workOrdersService.saveWorkOrders(this.workOrders);
-    if (this.selectedOrder?.docId === order.docId) {
-      this.onClosePanel();
+  protected async onDeleteWorkOrder(order: WorkOrderDocument): Promise<void> {
+    try {
+      await firstValueFrom(this.workOrdersService.deleteWorkOrder(order.docId));
+      this.workOrders = this.workOrders.filter((item) => item.docId !== order.docId);
+      if (this.selectedOrder?.docId === order.docId) {
+        this.onClosePanel();
+      }
+      this.buildTimeline(this.selectedTimescale);
+      this.loadError = null;
+    } catch {
+      this.loadError = 'Unable to delete the work order. Check that the API is running.';
     }
   }
 
@@ -95,7 +102,7 @@ export class WorkOrdersPage implements OnInit {
     this.panelSaveError = null;
   }
 
-  protected onSaveOrder(event: WorkOrderPanelSubmitEvent): void {
+  protected async onSaveOrder(event: WorkOrderPanelSubmitEvent): Promise<void> {
     const targetWorkCenterId =
       event.mode === 'edit'
         ? (this.selectedOrder?.data.workCenterId ?? '')
@@ -118,41 +125,70 @@ export class WorkOrdersPage implements OnInit {
     this.panelSaveError = null;
 
     if (event.mode === 'edit' && event.orderId) {
-      this.workOrders = this.workOrders.map((order) => {
-        if (order.docId !== event.orderId) {
-          return order;
-        }
-        return {
-          ...order,
+      const existingOrder = this.workOrders.find((order) => order.docId === event.orderId);
+      if (!existingOrder) {
+        this.panelSaveError = 'The selected work order no longer exists.';
+        return;
+      }
+
+      try {
+        const updatedOrder = await firstValueFrom(this.workOrdersService.updateWorkOrder({
+          ...existingOrder,
           data: {
-            ...order.data,
+            ...existingOrder.data,
             name: event.value.name,
+            workCenterId: targetWorkCenterId,
             status: event.value.status,
             startDate: event.value.startDate,
             endDate: event.value.endDate
           }
-        };
-      });
-      this.workOrdersService.saveWorkOrders(this.workOrders);
-      this.onClosePanel();
+        }));
+        this.workOrders = this.workOrders.map((order) =>
+          order.docId === event.orderId ? updatedOrder : order
+        );
+        this.buildTimeline(this.selectedTimescale);
+        this.onClosePanel();
+      } catch {
+        this.panelSaveError = 'Unable to save the work order. Check that the API is running.';
+      }
       return;
     }
 
-    const fallbackWorkCenterId = targetWorkCenterId;
-    const createdOrder: WorkOrderDocument = {
-      docId: `wo-${Date.now()}`,
-      docType: 'workOrder',
-      data: {
-        name: event.value.name,
-        workCenterId: fallbackWorkCenterId,
-        status: event.value.status,
-        startDate: event.value.startDate,
-        endDate: event.value.endDate
-      }
-    };
-    this.workOrders = [...this.workOrders, createdOrder];
-    this.workOrdersService.saveWorkOrders(this.workOrders);
-    this.onClosePanel();
+    try {
+      const createdOrder = await firstValueFrom(this.workOrdersService.createWorkOrder({
+        data: {
+          name: event.value.name,
+          workCenterId: targetWorkCenterId,
+          status: event.value.status,
+          startDate: event.value.startDate,
+          endDate: event.value.endDate
+        }
+      }));
+      this.workOrders = [...this.workOrders, createdOrder];
+      this.buildTimeline(this.selectedTimescale);
+      this.onClosePanel();
+    } catch {
+      this.panelSaveError = 'Unable to create the work order. Check that the API is running.';
+    }
+  }
+
+  private async loadPageData(): Promise<void> {
+    this.isLoading = true;
+    this.loadError = null;
+
+    try {
+      const [workCenters, workOrders] = await Promise.all([
+        firstValueFrom(this.workOrdersService.getWorkCenters()),
+        firstValueFrom(this.workOrdersService.getWorkOrders())
+      ]);
+      this.workCenters = workCenters;
+      this.workOrders = workOrders;
+      this.buildTimeline(this.selectedTimescale);
+    } catch {
+      this.loadError = 'Unable to load work orders. Start the API and verify the database connection.';
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   private hasOverlap(

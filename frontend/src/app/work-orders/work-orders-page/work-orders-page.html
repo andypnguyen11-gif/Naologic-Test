@@ -31,16 +31,26 @@
     </div>
   </header>
 
-  <app-timeline
-    [timescaleLabel]="selectedTimescale"
-    [workCenters]="workCenters"
-    [workOrders]="workOrders"
-    [timelineDates]="timelineDates"
-    [timelineHeader]="timelineHeader"
-    (createWorkOrder)="onCreateWorkOrder($event)"
-    (editWorkOrder)="onEditWorkOrder($event)"
-    (deleteWorkOrder)="onDeleteWorkOrder($event)"
-  />
+  @if (isLoading) {
+    <p>Loading work orders...</p>
+  }
+
+  @if (loadError) {
+    <p>{{ loadError }}</p>
+  }
+
+  @if (!isLoading && !loadError) {
+    <app-timeline
+      [timescaleLabel]="selectedTimescale"
+      [workCenters]="workCenters"
+      [workOrders]="workOrders"
+      [timelineDates]="timelineDates"
+      [timelineHeader]="timelineHeader"
+      (createWorkOrder)="onCreateWorkOrder($event)"
+      (editWorkOrder)="onEditWorkOrder($event)"
+      (deleteWorkOrder)="onDeleteWorkOrder($event)"
+    />
+  }
 
   <app-work-order-panel
     [open]="isPanelOpen"

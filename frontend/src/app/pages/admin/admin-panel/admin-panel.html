@@ -1,0 +1,39 @@
+<section class="admin-page">
+  <header class="admin-page__header">
+    <h1>Admin</h1>
+    <p>Manage the user accounts that can access the scheduling application.</p>
+  </header>
+
+  @if (isLoading) {
+    <p class="admin-page__state">Loading users...</p>
+  }
+
+  @if (loadError) {
+    <p class="admin-page__state admin-page__state--error">{{ loadError }}</p>
+  }
+
+  @if (!isLoading && !loadError) {
+    <div class="admin-grid">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
+            <td>{{ formatDate(user.createdAt) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
+import { WorkCenterDocument, WorkOrderDocument } from '../../../models/work-orders.models';
 
 export interface CreateWorkOrderRequest {
   workCenterId: string;

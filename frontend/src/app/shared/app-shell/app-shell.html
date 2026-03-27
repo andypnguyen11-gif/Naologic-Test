@@ -1,0 +1,34 @@
+<div class="app-shell">
+  <aside class="app-shell__nav">
+    <div class="app-shell__brand">
+      <img src="/branding/logo/naologic-logo.png" alt="Naologic" />
+    </div>
+
+    <nav class="app-shell__menu">
+      <a routerLink="/app/work-orders" routerLinkActive="is-active" class="app-shell__link">
+        Work Orders
+      </a>
+      @if (isAdmin) {
+        <a routerLink="/app/admin" routerLinkActive="is-active" class="app-shell__link">
+          Admin
+        </a>
+      }
+    </nav>
+
+    <div class="app-shell__footer">
+      @if (currentUser) {
+        <div class="app-shell__user">
+          <div class="app-shell__user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</div>
+          <div class="app-shell__user-role">{{ currentUser.role }}</div>
+        </div>
+      }
+      <button class="app-shell__signout" type="button" (click)="onLogout()">
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="app-shell__content">
+    <router-outlet />
+  </main>
+</div>

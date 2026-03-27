@@ -19,6 +19,7 @@ export class AuthService {
     const role = this.currentUser()?.role;
     return role === 'Admin' || role === 'Planner';
   });
+  readonly isAdmin = computed<boolean>(() => this.currentUser()?.role === 'Admin');
 
   login(payload: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiBaseUrl}/login`, payload).pipe(

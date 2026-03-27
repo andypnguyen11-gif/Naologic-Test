@@ -1,0 +1,61 @@
+.admin-page {
+  padding: 28px 32px 36px;
+  color: #030929;
+  font-family: "Circular-Std", sans-serif;
+}
+
+.admin-page__header {
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #7781a2;
+  }
+}
+
+.admin-page__state {
+  color: #5e6888;
+}
+
+.admin-page__state--error {
+  color: #b72d2d;
+}
+
+.admin-grid {
+  overflow: auto;
+  border: 1px solid #dfe4ff;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 24px rgba(62, 64, 219, 0.06);
+}
+
+.admin-grid table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-grid th,
+.admin-grid td {
+  padding: 16px 18px;
+  border-bottom: 1px solid #edf0ff;
+  text-align: left;
+  font-size: 14px;
+}
+
+.admin-grid th {
+  background: #f5f6ff;
+  color: #5a6487;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-grid tbody tr:last-child td {
+  border-bottom: 0;
+}

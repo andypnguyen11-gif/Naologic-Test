@@ -3,7 +3,7 @@ import { Component, EventEmitter, HostListener, Injectable, Input, OnChanges, Ou
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { NgbDateParserFormatter, NgbDateStruct, NgbDatepickerModule, NgbInputDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { WorkOrderDocument, WorkOrderStatus } from '../../../models/work-orders.models';
+import { WorkOrderDocument, WorkOrderStatus } from '../../../../models/work-orders.models';
 
 export interface WorkOrderPanelSubmitEvent {
   mode: 'create' | 'edit';

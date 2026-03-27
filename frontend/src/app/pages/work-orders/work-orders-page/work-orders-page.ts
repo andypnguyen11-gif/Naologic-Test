@@ -3,10 +3,10 @@ import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angula
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from '../../../auth/auth.service';
 import { CreateWorkOrderRequest, TimelineComponent } from '../timeline/timeline';
-import { WorkCenterDocument, WorkOrderDocument } from '../../models/work-orders.models';
-import { WorkOrdersService } from '../../services/work-orders.service';
+import { WorkCenterDocument, WorkOrderDocument } from '../../../models/work-orders.models';
+import { WorkOrdersService } from '../../../services/work-orders.service';
 import { WorkOrderPanel, WorkOrderPanelSubmitEvent } from '../panel/work-order-panel/work-order-panel';
 
 @Component({

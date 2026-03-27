@@ -81,7 +81,7 @@
   inset: 0;
   display: grid;
   pointer-events: none;
-  z-index: 6;
+  z-index: 2;
 }
 
 .wo-current-period-label {
@@ -115,7 +115,7 @@
   right: 0;
   display: grid;
   pointer-events: none;
-  z-index: 5;
+  z-index: 2;
 }
 
 .wo-current-period-line-cell {
@@ -169,6 +169,11 @@
   align-items: center;
   pointer-events: none;
   padding: 0 12px;
+}
+
+.wo-right-row:hover .wo-row-overlay,
+.wo-right-row.wo-right-row-open .wo-row-overlay {
+  z-index: 80;
 }
 
 .wo-row-tooltip-layer {
@@ -229,19 +234,6 @@
   height: 10px;
   background: rgba(3, 9, 41, 0.94);
   transform: translate(-50%, -5px) rotate(45deg);
-}
-
-.wo-right-row.wo-right-row-first .wo-bar:hover .wo-bar-tooltip,
-.wo-right-row.wo-right-row-first .wo-bar.wo-bar-open .wo-bar-tooltip {
-  top: calc(100% + 10px);
-  bottom: auto;
-}
-
-.wo-right-row.wo-right-row-first .wo-bar:hover .wo-bar-tooltip::after,
-.wo-right-row.wo-right-row-first .wo-bar.wo-bar-open .wo-bar-tooltip::after {
-  top: auto;
-  bottom: 100%;
-  transform: translate(-50%, 5px) rotate(45deg);
 }
 
 .wo-bar:hover .wo-bar-tooltip,

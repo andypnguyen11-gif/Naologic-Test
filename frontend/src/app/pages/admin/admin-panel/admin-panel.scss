@@ -5,6 +5,9 @@
 }
 
 .admin-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 20px;
 
   h1 {
@@ -35,6 +38,52 @@
   box-shadow: 0 12px 24px rgba(62, 64, 219, 0.06);
 }
 
+.admin-grid__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 18px 14px;
+}
+
+.admin-grid__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-grid__icon-button,
+.admin-grid__secondary-button,
+.admin-grid__primary-button {
+  height: 36px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-grid__icon-button {
+  width: 36px;
+  border: 1px solid #d6dcff;
+  background: #ffffff;
+  color: #3e40db;
+}
+
+.admin-grid__secondary-button {
+  padding: 0 14px;
+  border: 1px solid #d6dcff;
+  background: #ffffff;
+  color: #4e587d;
+}
+
+.admin-grid__primary-button {
+  padding: 0 16px;
+  border: 0;
+  background: linear-gradient(135deg, #5b6cff, #3e40db);
+  color: #ffffff;
+}
+
+.admin-grid__error {
+  padding: 12px 18px 0;
+}
+
 .admin-grid table {
   width: 100%;
   border-collapse: collapse;
@@ -58,4 +107,15 @@
 
 .admin-grid tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.admin-grid__role-select {
+  min-width: 116px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #d6dcff;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #18223b;
+  font: inherit;
 }

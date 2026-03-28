@@ -9,3 +9,8 @@ export interface AdminUser {
   isActive: boolean;
   createdAt: string;
 }
+
+export interface UpdateUserRoleItemRequest {
+  userId: string;
+  role: UserRole;
+}

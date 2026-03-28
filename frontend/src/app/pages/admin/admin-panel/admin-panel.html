@@ -1,7 +1,9 @@
 <section class="admin-page">
   <header class="admin-page__header">
-    <h1>Admin</h1>
-    <p>Manage the user accounts that can access the scheduling application.</p>
+    <div>
+      <h1>Admin</h1>
+      <p>Manage the user accounts that can access the scheduling application.</p>
+    </div>
   </header>
 
   @if (isLoading) {
@@ -14,6 +16,27 @@
 
   @if (!isLoading && !loadError) {
     <div class="admin-grid">
+      <div class="admin-grid__toolbar">
+        @if (!isEditMode) {
+          <button class="admin-grid__icon-button" type="button" (click)="enableEditMode()" aria-label="Edit roles">
+            ✎
+          </button>
+        } @else {
+          <div class="admin-grid__actions">
+            <button class="admin-grid__secondary-button" type="button" (click)="undoRoleChanges()" [disabled]="isSaving">
+              Undo
+            </button>
+            <button class="admin-grid__primary-button" type="button" (click)="saveRoleChanges()" [disabled]="isSaving">
+              {{ isSaving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (saveError) {
+        <p class="admin-page__state admin-page__state--error admin-grid__error">{{ saveError }}</p>
+      }
+
       <table>
         <thead>
           <tr>
@@ -28,7 +51,15 @@
           <tr *ngFor="let user of users">
             <td>{{ user.firstName }} {{ user.lastName }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.role }}</td>
+            <td>
+              @if (!isEditMode) {
+                {{ user.role }}
+              } @else {
+                <select class="admin-grid__role-select" [(ngModel)]="pendingRoles[user.userId]">
+                  <option *ngFor="let role of roleOptions" [ngValue]="role">{{ role }}</option>
+                </select>
+              }
+            </td>
             <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
             <td>{{ formatDate(user.createdAt) }}</td>
           </tr>

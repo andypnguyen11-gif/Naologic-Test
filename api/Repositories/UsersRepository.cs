@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Naologic_API.Constants;
 using Naologic_API.Models.Admin;
 using Naologic_API.Models.Auth;
 
@@ -103,6 +104,46 @@ public sealed class UsersRepository
 
         return user;
     }
+
+    public async Task UpdateUserRolesAsync(IReadOnlyList<UpdateUserRoleItemRequest> updates, CancellationToken cancellationToken)
+    {
+        if (updates.Count == 0)
+        {
+            return;
+        }
+
+        const string sql = """
+            UPDATE Users
+            SET Role = @role
+            WHERE UserId = @userId;
+            """;
+
+        await using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        foreach (var update in updates)
+        {
+          if (!AllowedRoles.Contains(update.Role))
+          {
+              throw new InvalidOperationException($"Unsupported role value '{update.Role}'.");
+          }
+
+          await using var command = new SqlCommand(sql, connection, transaction as SqlTransaction);
+          command.Parameters.AddWithValue("@role", update.Role);
+          command.Parameters.AddWithValue("@userId", update.UserId);
+          await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    private static readonly HashSet<string> AllowedRoles =
+    [
+        UserRoles.Admin,
+        UserRoles.Planner,
+        UserRoles.Viewer
+    ];
 
     private static AppUserAccount MapUser(SqlDataReader reader)
     {

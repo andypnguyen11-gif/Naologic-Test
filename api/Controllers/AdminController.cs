@@ -24,4 +24,30 @@ public sealed class AdminController : ControllerBase
         var users = await _usersRepository.GetAllUsersAsync(cancellationToken);
         return Ok(users);
     }
+
+    [HttpPut("users/update-roles")]
+    public async Task<IResult> UpdateUserRoles([FromBody] UpdateUserRolesRequest request, CancellationToken cancellationToken)
+    {
+        if (request.Updates.Count == 0)
+        {
+            return Results.NoContent();
+        }
+
+        var invalidRoles = request.Updates
+            .Where(update => update.Role is not (UserRoles.Admin or UserRoles.Planner or UserRoles.Viewer))
+            .Select(update => update.Role)
+            .Distinct()
+            .ToArray();
+
+        if (invalidRoles.Length > 0)
+        {
+            return Results.ValidationProblem(new Dictionary<string, string[]>
+            {
+                ["role"] = [$"Unsupported role values: {string.Join(", ", invalidRoles)}."]
+            });
+        }
+
+        await _usersRepository.UpdateUserRolesAsync(request.Updates, cancellationToken);
+        return Results.NoContent();
+    }
 }

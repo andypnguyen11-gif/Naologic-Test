@@ -8,3 +8,7 @@ public sealed record AdminUserResponse(
     string Role,
     bool IsActive,
     DateTime CreatedAt);
+
+public sealed record UpdateUserRoleItemRequest(Guid UserId, string Role);
+
+public sealed record UpdateUserRolesRequest(IReadOnlyList<UpdateUserRoleItemRequest> Updates);

@@ -1,29 +1,35 @@
-This project is a full-stack manufacturing scheduling app for managing work
-  orders across work centers.
+This project is a full-stack manufacturing scheduling and planning app for managing work orders, production readiness, and user access across work centers.
 
-  It includes:
+It includes:
 
-  - an Angular frontend that displays work orders in a timeline/grid view
-  - a C# ASP.NET Core API for retrieving and managing work-center and work-order
-    data
-  - a SQL Server database for persisting the data shown in the UI
+- an Angular frontend for work-order scheduling, planning analysis, authentication, and admin flows
+- a C# ASP.NET Core API for retrieving and managing work-order, planning, auth, and admin data
+- a SQL Server database for persisting the manufacturing data shown in the UI
 
-  The frontend allows users to:
+The frontend allows users to:
 
-  - view work orders by day, week, or month
-  - create, edit, and delete work orders
-  - see work orders grouped by work center
-  - validate scheduling conflicts in the UI
+- sign up, log in, and access authenticated application routes
+- view work orders by day, week, or month
+- create, edit, and delete work orders
+- see work orders grouped by work center
+- validate scheduling conflicts in the UI
+- open a planning dashboard with product and target quantity filters
+- review buildability, shortages, projected ready days, and component gap detail through summary cards, charts, and tables
+- access an admin screen for user management when authorized
 
-  The backend is responsible for:
+The backend is responsible for:
 
-  - serving work-center and work-order data to the frontend
-  - handling create, update, and delete operations
-  - persisting application data in SQL Server instead of browser localStorage
+- serving work-center and work-order data to the frontend
+- handling create, update, and delete work-order operations
+- exposing planning data for component gap analysis based on bill of materials, inventory, and work-center data
+- handling authentication and authorization for application users
+- supporting admin user-management operations
+- persisting application data in SQL Server instead of browser localStorage
 
-  The database layer includes:
+The database layer includes:
 
-  - a WorkCenters table
-  - a WorkOrders table
-  - a SQL setup and seed script that creates the schema and loads the initial
-    sample data
+- a `WorkCenters` table
+- a `WorkOrders` table
+- planning-related tables such as bill of materials, parts, and inventory
+- user/account data used for authentication and admin access
+- SQL setup and seed scripts that create the schema and load the sample data

@@ -45,6 +45,7 @@ builder.Services.AddAuthorizationBuilder()
         policy.RequireRole(UserRoles.Admin, UserRoles.Planner));
 
 builder.Services.AddSingleton<WorkOrdersRepository>();
+builder.Services.AddSingleton<PlanningRepository>();
 builder.Services.AddSingleton<UsersRepository>();
 builder.Services.AddSingleton<IPasswordHasher<AppUserAccount>, PasswordHasher<AppUserAccount>>();
 builder.Services.AddSingleton<JwtTokenService>();

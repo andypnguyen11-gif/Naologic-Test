@@ -33,9 +33,9 @@
 .admin-grid {
   overflow: auto;
   border: 1px solid #dfe4ff;
-  border-radius: 18px;
+  border-radius: 0;
   background: #ffffff;
-  box-shadow: 0 12px 24px rgba(62, 64, 219, 0.06);
+  box-shadow: none;
 }
 
 .admin-grid__toolbar {

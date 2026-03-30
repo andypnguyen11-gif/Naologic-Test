@@ -1,0 +1,295 @@
+.planning-page {
+  min-height: 100vh;
+  padding: 28px 32px 40px;
+  background:
+    radial-gradient(circle at top right, rgba(111, 138, 255, 0.14), transparent 28%),
+    linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
+  color: #15203a;
+  font-family: "Circular-Std", sans-serif;
+}
+
+.planning-header {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 4px 0 8px;
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 600;
+  }
+}
+
+.planning-eyebrow {
+  margin: 0;
+  color: #5f73da;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.planning-subtitle {
+  max-width: 720px;
+  margin: 0;
+  color: #607090;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.planning-filters {
+  position: relative;
+  z-index: 21;
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.planning-filter {
+  position: relative;
+  min-width: 220px;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 40px rgba(61, 90, 196, 0.12);
+  backdrop-filter: blur(16px);
+
+  span {
+    display: block;
+    margin-bottom: 8px;
+    color: #607090;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
+
+.planning-filter-target {
+  min-width: 150px;
+}
+
+:host ::ng-deep .planning-filter .ng-select-container {
+  min-height: 42px;
+  border: 1px solid #dce4ff;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+:host ::ng-deep .planning-filter .ng-value-container {
+  padding-left: 12px;
+}
+
+:host ::ng-deep .planning-filter .ng-input {
+  padding-left: 12px;
+}
+
+:host ::ng-deep .planning-filter ng-select.ng-select-opened {
+  z-index: 30;
+}
+
+:host ::ng-deep .planning-filter .ng-dropdown-panel {
+  z-index: 31;
+  border: 1px solid #dce4ff;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(61, 90, 196, 0.18);
+}
+
+.planning-summary {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.planning-summary-card,
+.planning-chart-card,
+.planning-table-card {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 22px 40px rgba(66, 91, 179, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+.planning-summary-card {
+  padding: 18px 20px;
+
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    margin-top: 10px;
+    font-size: 24px;
+    color: #162246;
+  }
+
+  small {
+    margin-top: 6px;
+    color: #7b86a3;
+    font-size: 13px;
+  }
+}
+
+.planning-summary-label {
+  color: #7281a7;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.planning-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.planning-chart-card {
+  padding: 18px 20px 12px;
+}
+
+.planning-chart-card-wide {
+  grid-column: 1 / -1;
+}
+
+.planning-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #18254c;
+  }
+
+  p {
+    margin: 0;
+    color: #7481a1;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+}
+
+.planning-chart {
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.planning-chart-short {
+  height: 320px;
+}
+
+.planning-table-card {
+  padding: 18px 20px 8px;
+}
+
+.planning-table-wrap {
+  overflow-x: auto;
+}
+
+.planning-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #ebefff;
+    font-size: 14px;
+  }
+
+  th {
+    color: #7180a5;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  td {
+    color: #23304d;
+  }
+}
+
+.planning-table-name {
+  font-weight: 600;
+}
+
+.planning-table-meta {
+  margin-top: 2px;
+  color: #7e89a6;
+  font-size: 12px;
+}
+
+.is-short {
+  color: #d35b2d;
+  font-weight: 700;
+}
+
+.planning-state {
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #4e5f86;
+}
+
+.planning-state-error {
+  color: #a94438;
+}
+
+@media (max-width: 1120px) {
+  .planning-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .planning-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .planning-chart-card-wide {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 820px) {
+  .planning-page {
+    padding: 22px 18px 28px;
+  }
+
+  .planning-header {
+    flex-direction: column;
+  }
+
+  .planning-filters {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .planning-filter,
+  .planning-filter-target {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .planning-summary {
+    grid-template-columns: 1fr;
+  }
+}

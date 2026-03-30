@@ -1,0 +1,151 @@
+<div class="planning-page">
+  <header class="planning-header">
+    <div>
+      <p class="planning-eyebrow">Factory Planning</p>
+      <h1>Tractor Build Readiness</h1>
+      <p class="planning-subtitle">
+        Joined bill-of-materials, inventory, and work center data for {{ selectedProductLabel }}.
+      </p>
+    </div>
+
+    <div class="planning-filters">
+      <label class="planning-filter">
+        <span>Product</span>
+        <ng-select
+          [items]="productOptions"
+          bindLabel="label"
+          bindValue="partId"
+          [ngModel]="selectedPartId"
+          (ngModelChange)="selectedPartId = $event; onFiltersChanged()"
+          [clearable]="false"
+          [searchable]="false"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </label>
+
+      <label class="planning-filter planning-filter-target">
+        <span>Target Qty</span>
+        <ng-select
+          [items]="targetOptions"
+          [ngModel]="selectedTargetQty"
+          (ngModelChange)="selectedTargetQty = $event; onFiltersChanged()"
+          [clearable]="false"
+          [searchable]="false"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </label>
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <p class="planning-state">Loading planning charts...</p>
+  }
+
+  @if (loadError) {
+    <p class="planning-state planning-state-error">{{ loadError }}</p>
+  }
+
+  @if (!isLoading && !loadError) {
+    <section class="planning-summary">
+      <article class="planning-summary-card">
+        <span class="planning-summary-label">Target Build</span>
+        <strong>{{ selectedTargetQty }} tractors</strong>
+      </article>
+      <article class="planning-summary-card">
+        <span class="planning-summary-label">Buildable Now</span>
+        <strong>{{ maxBuildableNow }} tractors</strong>
+      </article>
+      <article class="planning-summary-card">
+        <span class="planning-summary-label">Total Shortage</span>
+        <strong>{{ totalShortageUnits }} units</strong>
+      </article>
+      <article class="planning-summary-card">
+        <span class="planning-summary-label">Critical Part</span>
+        <strong>{{ criticalComponent }}</strong>
+        <small>{{ criticalReadyDays }} day readiness window</small>
+      </article>
+    </section>
+
+    <section class="planning-chart-grid">
+      <article class="planning-chart-card planning-chart-card-wide">
+        <div class="planning-card-header">
+          <div>
+            <h2>Required vs Available</h2>
+            <p>Each tractor requirement expanded from the BOM and compared with inventory on hand.</p>
+          </div>
+        </div>
+        <highcharts-chart
+          [options]="requiredVsAvailableOptions"
+          class="planning-chart"
+        />
+      </article>
+
+      <article class="planning-chart-card">
+        <div class="planning-card-header">
+          <div>
+            <h2>Shortage by Part</h2>
+            <p>Components blocking the current production target.</p>
+          </div>
+        </div>
+        <highcharts-chart
+          [options]="shortageOptions"
+          class="planning-chart planning-chart-short"
+        />
+      </article>
+
+      <article class="planning-chart-card">
+        <div class="planning-card-header">
+          <div>
+            <h2>Projected Ready Days</h2>
+            <p>Lead or build time needed before each component is ready.</p>
+          </div>
+        </div>
+        <highcharts-chart
+          [options]="readinessOptions"
+          class="planning-chart planning-chart-short"
+        />
+      </article>
+    </section>
+
+    <section class="planning-table-card">
+      <div class="planning-card-header">
+        <div>
+          <h2>Component Gap Detail</h2>
+          <p>Joined output from parts, inventory, and work centers.</p>
+        </div>
+      </div>
+
+      <div class="planning-table-wrap">
+        <table class="planning-table">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Type</th>
+              <th>Work Center</th>
+              <th>Required</th>
+              <th>Available</th>
+              <th>On Order</th>
+              <th>Shortage</th>
+              <th>Ready Days</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of componentGaps; trackBy: trackByComponent">
+              <td>
+                <div class="planning-table-name">{{ item.componentName }}</div>
+                <div class="planning-table-meta">{{ item.partNumber }}</div>
+              </td>
+              <td>{{ item.partType }}</td>
+              <td>{{ item.workCenterName || 'Supplier' }}</td>
+              <td>{{ item.quantityRequired }}</td>
+              <td>{{ item.quantityAvailable }}</td>
+              <td>{{ item.quantityOnOrder }}</td>
+              <td [class.is-short]="item.shortage > 0">{{ item.shortage }}</td>
+              <td>{{ item.projectedReadyDays }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>

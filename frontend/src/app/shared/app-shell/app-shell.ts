@@ -12,6 +12,7 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class AppShell {
   private readonly authService = inject(AuthService);
+  protected isNavCollapsed = false;
 
   protected get currentUser() {
     return this.authService.currentUser();
@@ -19,6 +20,10 @@ export class AppShell {
 
   protected get isAdmin(): boolean {
     return this.authService.currentUser()?.role === 'Admin';
+  }
+
+  protected toggleNav(): void {
+    this.isNavCollapsed = !this.isNavCollapsed;
   }
 
   protected onLogout(): void {

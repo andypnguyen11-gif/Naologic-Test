@@ -49,6 +49,8 @@
 }
 
 .wo-right-scroll {
+  // Keep horizontal scrolling on the inner layer so the outer viewport can host
+  // overlays like the floating tooltip without widening the overall grid.
   position: relative;
   width: 100%;
   height: 100%;

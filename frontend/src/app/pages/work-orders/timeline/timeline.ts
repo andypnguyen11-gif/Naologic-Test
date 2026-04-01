@@ -142,6 +142,8 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     const maxAnchor = Math.max(rect.width - 24, minAnchor);
     const nextAnchor = Math.min(Math.max(event.clientX - rect.left, minAnchor), maxAnchor);
 
+    // Position the tooltip in the outer viewport layer so it can render above
+    // the timeline grid even when the hovered bar sits on the first row.
     this.hoveredTooltipOrder = order;
     this.hoveredBarTooltipLeftPx = rect.left - viewportRect.left + nextAnchor;
     this.hoveredBarTooltipTopPx = rect.top - viewportRect.top - 10;

@@ -26,6 +26,7 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   @Output() editWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() deleteWorkOrder = new EventEmitter<WorkOrderDocument>();
   @Output() createWorkOrder = new EventEmitter<CreateWorkOrderRequest>();
+  @ViewChild('timelineViewport') private timelineViewport?: ElementRef<HTMLDivElement>;
   @ViewChild('timelineScroller') private timelineScroller?: ElementRef<HTMLDivElement>;
   @ViewChild('timescaleGrid') private timescaleGrid?: ElementRef<HTMLDivElement>;
 
@@ -40,8 +41,9 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
   protected hoveredWorkCenterId: string | null = null;
   protected hoveredTimelineCellWorkCenterId: string | null = null;
   protected hoveredTimelineCellGridColumn: string | null = null;
-  protected hoveredBarTooltipOrderId: string | null = null;
+  protected hoveredTooltipOrder: WorkOrderDocument | null = null;
   protected hoveredBarTooltipLeftPx = 0;
+  protected hoveredBarTooltipTopPx = 0;
 
   ngAfterViewInit(): void {
     this.scheduleScrollToCurrentPeriod();
@@ -122,31 +124,32 @@ export class TimelineComponent implements OnChanges, AfterViewInit {
     return `${this.formatTooltipDate(start)} - ${this.formatTooltipDate(end)}`;
   }
 
-  getBarTooltipLeft(orderId: string): string {
-    if (this.hoveredBarTooltipOrderId === orderId) {
-      return `${this.hoveredBarTooltipLeftPx}px`;
-    }
-    return '50%';
-  }
-
   onBarHover(orderId: string, event: MouseEvent): void {
     const bar = event.currentTarget as HTMLElement | null;
-    if (!bar) {
+    const viewport = this.timelineViewport?.nativeElement;
+    if (!bar || !viewport) {
+      return;
+    }
+
+    const order = this.workOrders.find((candidate) => candidate.docId === orderId) ?? null;
+    if (!order) {
       return;
     }
 
     const rect = bar.getBoundingClientRect();
+    const viewportRect = viewport.getBoundingClientRect();
     const minAnchor = 24;
     const maxAnchor = Math.max(rect.width - 24, minAnchor);
-    const nextLeft = Math.min(Math.max(event.clientX - rect.left, minAnchor), maxAnchor);
+    const nextAnchor = Math.min(Math.max(event.clientX - rect.left, minAnchor), maxAnchor);
 
-    this.hoveredBarTooltipOrderId = orderId;
-    this.hoveredBarTooltipLeftPx = nextLeft;
+    this.hoveredTooltipOrder = order;
+    this.hoveredBarTooltipLeftPx = rect.left - viewportRect.left + nextAnchor;
+    this.hoveredBarTooltipTopPx = rect.top - viewportRect.top - 10;
   }
 
   onBarLeave(orderId: string): void {
-    if (this.hoveredBarTooltipOrderId === orderId) {
-      this.hoveredBarTooltipOrderId = null;
+    if (this.hoveredTooltipOrder?.docId === orderId) {
+      this.hoveredTooltipOrder = null;
     }
   }
 

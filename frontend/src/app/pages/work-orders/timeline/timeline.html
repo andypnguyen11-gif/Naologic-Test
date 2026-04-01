@@ -13,123 +13,129 @@
       </div>
     </div>
 
-    <div class="wo-right" #timelineScroller>
-      <div class="wo-right-header">
-        <div class="wo-timescale" #timescaleGrid [style.gridTemplateColumns]="gridTemplateColumns">
-          <div class="wo-time-cell" *ngFor="let cell of timelineHeader">
-            {{ cell }}
+    <div class="wo-right" #timelineViewport>
+      <div class="wo-right-scroll" #timelineScroller>
+        <div class="wo-right-header">
+          <div class="wo-timescale" #timescaleGrid [style.gridTemplateColumns]="gridTemplateColumns">
+            <div class="wo-time-cell" *ngFor="let cell of timelineHeader">
+              {{ cell }}
+            </div>
+          </div>
+          <div
+            class="wo-current-period-header"
+            *ngIf="hasCurrentPeriod"
+            [style.gridTemplateColumns]="gridTemplateColumns"
+            aria-hidden="true"
+          >
+            <div class="wo-current-period-label" [style.gridColumn]="currentPeriodGridColumn">
+              <span>Current month</span>
+            </div>
           </div>
         </div>
+
         <div
-          class="wo-current-period-header"
+          class="wo-current-period-line"
           *ngIf="hasCurrentPeriod"
           [style.gridTemplateColumns]="gridTemplateColumns"
           aria-hidden="true"
         >
-          <div class="wo-current-period-label" [style.gridColumn]="currentPeriodGridColumn">
-            <span>Current month</span>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="wo-current-period-line"
-        *ngIf="hasCurrentPeriod"
-        [style.gridTemplateColumns]="gridTemplateColumns"
-        aria-hidden="true"
-      >
-        <div
-          class="wo-current-period-line-cell"
-          [style.gridColumn]="currentPeriodGridColumn"
-        ></div>
-      </div>
-
-      <div
-        class="wo-right-row"
-        *ngFor="let wc of workCenters"
-        [class.wo-right-row-first]="workCenters[0]?.docId === wc.docId"
-        [class.wo-right-row-open]="isActionRowOpen(wc.docId)"
-        (mouseenter)="onRowHover(wc.docId)"
-        (mouseleave)="onRowHover(null)"
-      >
-        <div class="wo-row-grid" [style.gridTemplateColumns]="gridTemplateColumns">
           <div
-            class="wo-time-cell"
-            *ngFor="let date of timelineDates"
-            (mouseenter)="onTimelineCellHover(wc.docId, date)"
-            (mouseleave)="onTimelineCellHover(wc.docId, null)"
-            (click)="onTimelineCellClick(wc.docId, date, $event)"
+            class="wo-current-period-line-cell"
+            [style.gridColumn]="currentPeriodGridColumn"
           ></div>
         </div>
-        <div class="wo-row-overlay" [style.gridTemplateColumns]="gridTemplateColumns">
-          <div
-            class="wo-bar"
-            *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
-            [style.gridColumn]="getGridColumn(order)"
-            [style.marginLeft.%]="getBarStartInsetPercent(order)"
-            [style.marginRight.%]="getBarEndInsetPercent(order)"
-            [attr.data-status]="order.data.status"
-            [class.wo-bar-open]="openedActionOrderId === order.docId"
-            (mouseenter)="onBarHover(order.docId, $event)"
-            (mousemove)="onBarHover(order.docId, $event)"
-            (mouseleave)="onBarLeave(order.docId)"
-            (click)="$event.stopPropagation()"
-          >
-            <div
-              class="wo-bar-tooltip"
-              role="tooltip"
-              [style.left]="getBarTooltipLeft(order.docId)"
-            >
-              <div class="wo-bar-tooltip-name">{{ order.data.name }}</div>
-              <div class="wo-bar-tooltip-meta">
-                <span class="wo-bar-tooltip-status">{{ getWorkOrderTooltipStatus(order) }}</span>
-                <span class="wo-bar-tooltip-dates">{{ getWorkOrderTooltipDateRange(order) }}</span>
-              </div>
-            </div>
-            <span class="wo-bar-title">{{ order.data.name }}</span>
-            <span class="wo-bar-meta">
-              <span class="wo-bar-status" [attr.data-status]="order.data.status">
-                {{ order.data.status }}
-              </span>
-              <ng-container *ngIf="allowEditing">
-                <ng-select
-                  class="wo-bar-actions"
-                  [items]="actionOptions"
-                  bindLabel="label"
-                  bindValue="value"
-                  [clearable]="false"
-                  [searchable]="false"
-                  [ngModel]="getSelectedAction(order.docId)"
-                  [ngModelOptions]="{ standalone: true }"
-                  (open)="onActionOpen(order.docId, wc.docId)"
-                  (close)="onActionClose(order.docId, wc.docId)"
-                  (change)="onActionChange(order, $event)"
-                  (click)="$event.stopPropagation()"
-                  placeholder="⋯"
-                >
-                  <ng-template ng-option-tmp let-item="item">
-                    <span
-                      class="wo-action-option"
-                      [class.wo-action-option-delete]="item.value === 'delete'"
-                    >
-                      {{ item.label }}
-                    </span>
-                  </ng-template>
-                </ng-select>
-              </ng-container>
-            </span>
-          </div>
-        </div>
+
         <div
-          class="wo-row-tooltip-layer"
-          *ngIf="allowEditing && hoveredTimelineCellWorkCenterId === wc.docId && hoveredTimelineCellGridColumn"
-          [style.gridTemplateColumns]="gridTemplateColumns"
+          class="wo-right-row"
+          *ngFor="let wc of workCenters"
+          [class.wo-right-row-first]="workCenters[0]?.docId === wc.docId"
+          [class.wo-right-row-open]="isActionRowOpen(wc.docId)"
+          (mouseenter)="onRowHover(wc.docId)"
+          (mouseleave)="onRowHover(null)"
         >
-          <div class="wo-row-tooltip-cell" [style.gridColumn]="hoveredTimelineCellGridColumn">
-            <span class="wo-add-tooltip">Click to add dates</span>
+          <div class="wo-row-grid" [style.gridTemplateColumns]="gridTemplateColumns">
+            <div
+              class="wo-time-cell"
+              *ngFor="let date of timelineDates"
+              (mouseenter)="onTimelineCellHover(wc.docId, date)"
+              (mouseleave)="onTimelineCellHover(wc.docId, null)"
+              (click)="onTimelineCellClick(wc.docId, date, $event)"
+            ></div>
+          </div>
+          <div class="wo-row-overlay" [style.gridTemplateColumns]="gridTemplateColumns">
+            <div
+              class="wo-bar"
+              *ngFor="let order of getWorkOrdersForCenter(wc.docId)"
+              [style.gridColumn]="getGridColumn(order)"
+              [style.marginLeft.%]="getBarStartInsetPercent(order)"
+              [style.marginRight.%]="getBarEndInsetPercent(order)"
+              [attr.data-status]="order.data.status"
+              [class.wo-bar-open]="openedActionOrderId === order.docId"
+              (mouseenter)="onBarHover(order.docId, $event)"
+              (mousemove)="onBarHover(order.docId, $event)"
+              (mouseleave)="onBarLeave(order.docId)"
+              (click)="$event.stopPropagation()"
+            >
+              <span class="wo-bar-title">{{ order.data.name }}</span>
+              <span class="wo-bar-meta">
+                <span class="wo-bar-status" [attr.data-status]="order.data.status">
+                  {{ order.data.status }}
+                </span>
+                <ng-container *ngIf="allowEditing">
+                  <ng-select
+                    class="wo-bar-actions"
+                    [items]="actionOptions"
+                    bindLabel="label"
+                    bindValue="value"
+                    [clearable]="false"
+                    [searchable]="false"
+                    [ngModel]="getSelectedAction(order.docId)"
+                    [ngModelOptions]="{ standalone: true }"
+                    (open)="onActionOpen(order.docId, wc.docId)"
+                    (close)="onActionClose(order.docId, wc.docId)"
+                    (change)="onActionChange(order, $event)"
+                    (click)="$event.stopPropagation()"
+                    placeholder="⋯"
+                  >
+                    <ng-template ng-option-tmp let-item="item">
+                      <span
+                        class="wo-action-option"
+                        [class.wo-action-option-delete]="item.value === 'delete'"
+                      >
+                        {{ item.label }}
+                      </span>
+                    </ng-template>
+                  </ng-select>
+                </ng-container>
+              </span>
+            </div>
+          </div>
+          <div
+            class="wo-row-tooltip-layer"
+            *ngIf="allowEditing && hoveredTimelineCellWorkCenterId === wc.docId && hoveredTimelineCellGridColumn"
+            [style.gridTemplateColumns]="gridTemplateColumns"
+          >
+            <div class="wo-row-tooltip-cell" [style.gridColumn]="hoveredTimelineCellGridColumn">
+              <span class="wo-add-tooltip">Click to add dates</span>
+            </div>
           </div>
         </div>
       </div>
+
+      @if (hoveredTooltipOrder) {
+        <div
+          class="wo-bar-tooltip wo-bar-tooltip-floating"
+          role="tooltip"
+          [style.left.px]="hoveredBarTooltipLeftPx"
+          [style.top.px]="hoveredBarTooltipTopPx"
+        >
+          <div class="wo-bar-tooltip-name">{{ hoveredTooltipOrder.data.name }}</div>
+          <div class="wo-bar-tooltip-meta">
+            <span class="wo-bar-tooltip-status">{{ getWorkOrderTooltipStatus(hoveredTooltipOrder) }}</span>
+            <span class="wo-bar-tooltip-dates">{{ getWorkOrderTooltipDateRange(hoveredTooltipOrder) }}</span>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </section>

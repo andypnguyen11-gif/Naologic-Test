@@ -32,6 +32,14 @@
       >
         Today
       </button>
+      <button
+        class="wo-export-button"
+        type="button"
+        (click)="onExportCsv()"
+        [disabled]="!workOrders.length"
+      >
+        Export CSV
+      </button>
     </div>
   </div>
 

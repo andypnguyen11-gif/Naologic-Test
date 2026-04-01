@@ -68,6 +68,29 @@ export class WorkOrdersPage implements OnInit {
     this.timeline?.scrollToToday();
   }
 
+  protected onExportCsv(): void {
+    if (!this.workOrders.length) {
+      return;
+    }
+
+    const csvRows = [
+      ['Work Center', 'Work Order', 'Status', 'Start Date', 'End Date'],
+      ...this.buildExportRows()
+    ];
+
+    const csvContent = csvRows
+      .map((row) => row.map((value) => this.escapeCsvValue(value)).join(','))
+      .join('\r\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = this.buildExportFileName();
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   protected onEditWorkOrder(order: WorkOrderDocument): void {
     this.ngZone.run(() => {
       this.selectedOrder = order;
@@ -270,6 +293,55 @@ export class WorkOrdersPage implements OnInit {
     this.timelineHeader = this.timelineDates.map((date) =>
       date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     );
+  }
+
+  private buildExportRows(): string[][] {
+    const workCenterNameById = new Map(
+      this.workCenters.map((workCenter) => [workCenter.docId, workCenter.data.name])
+    );
+
+    return [...this.workOrders]
+      .sort((left, right) => {
+        const centerCompare = (workCenterNameById.get(left.data.workCenterId) ?? '').localeCompare(
+          workCenterNameById.get(right.data.workCenterId) ?? ''
+        );
+        if (centerCompare !== 0) {
+          return centerCompare;
+        }
+
+        const startCompare = this.toUtcMillis(left.data.startDate) - this.toUtcMillis(right.data.startDate);
+        if (startCompare !== 0) {
+          return startCompare;
+        }
+
+        return left.data.name.localeCompare(right.data.name);
+      })
+      .map((order) => [
+        workCenterNameById.get(order.data.workCenterId) ?? 'Unknown Work Center',
+        order.data.name,
+        this.formatStatusForExport(order.data.status),
+        order.data.startDate,
+        order.data.endDate
+      ]);
+  }
+
+  private buildExportFileName(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = `${today.getMonth() + 1}`.padStart(2, '0');
+    const day = `${today.getDate()}`.padStart(2, '0');
+    return `naologic-work-orders-${year}-${month}-${day}.csv`;
+  }
+
+  private escapeCsvValue(value: string): string {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+
+  private formatStatusForExport(status: WorkOrderDocument['data']['status']): string {
+    if (status === 'in-progress') {
+      return 'In Progress';
+    }
+    return status.charAt(0).toUpperCase() + status.slice(1);
   }
 
   private buildDayRange(start: Date, end: Date, paddingDays: number): Date[] {

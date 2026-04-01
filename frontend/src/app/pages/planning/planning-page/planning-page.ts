@@ -153,7 +153,7 @@ export class PlanningPage implements OnInit {
         type: 'column',
         backgroundColor: 'transparent',
         spacingTop: 8,
-        spacingLeft: 0,
+        spacingLeft: 12,
         spacingRight: 0
       },
       title: { text: undefined },
@@ -210,7 +210,7 @@ export class PlanningPage implements OnInit {
         type: 'bar',
         backgroundColor: 'transparent',
         spacingTop: 8,
-        spacingLeft: 0,
+        spacingLeft: 12,
         spacingRight: 0
       },
       title: { text: undefined },
@@ -254,7 +254,7 @@ export class PlanningPage implements OnInit {
         type: 'column',
         backgroundColor: 'transparent',
         spacingTop: 8,
-        spacingLeft: 0,
+        spacingLeft: 12,
         spacingRight: 0
       },
       title: { text: undefined },

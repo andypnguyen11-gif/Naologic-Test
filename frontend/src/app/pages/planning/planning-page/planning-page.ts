@@ -17,6 +17,33 @@ import { PlanningService } from '../../../services/planning.service';
 })
 export class PlanningPage implements OnInit {
   private readonly planningService = inject(PlanningService);
+  private readonly chartExportConfig: Record<PlanningChartExportKey, PlanningExportConfig> = {
+    'required-vs-available': {
+      fileSuffix: 'required-vs-available',
+      headers: ['Component', 'Required Quantity', 'Available Quantity'],
+      rows: () => this.componentGaps.map((item) => [
+        item.componentName,
+        this.formatCsvNumber(item.quantityRequired),
+        this.formatCsvNumber(item.quantityAvailable)
+      ])
+    },
+    'shortage-by-part': {
+      fileSuffix: 'shortage-by-part',
+      headers: ['Component', 'Shortage Quantity'],
+      rows: () => this.componentGaps.map((item) => [
+        item.componentName,
+        this.formatCsvNumber(item.shortage)
+      ])
+    },
+    'projected-ready-days': {
+      fileSuffix: 'projected-ready-days',
+      headers: ['Component', 'Projected Ready Days'],
+      rows: () => this.componentGaps.map((item) => [
+        item.componentName,
+        `${item.projectedReadyDays}`
+      ])
+    }
+  };
 
   protected readonly productOptions: PlanningProductOption[] = [
     { partId: 'part-tractor-1000', label: 'Tractor Model 1000' }
@@ -65,6 +92,29 @@ export class PlanningPage implements OnInit {
 
   protected async onFiltersChanged(): Promise<void> {
     await this.loadPlanningData();
+  }
+
+  protected exportChartCsv(key: PlanningChartExportKey): void {
+    const config = this.chartExportConfig[key];
+    this.exportCsv(config.headers, config.rows(), config.fileSuffix);
+  }
+
+  protected exportGridCsv(): void {
+    this.exportCsv(
+      ['Component', 'Part Number', 'Type', 'Work Center', 'Required', 'Available', 'On Order', 'Shortage', 'Ready Days'],
+      this.componentGaps.map((item) => [
+        item.componentName,
+        item.partNumber,
+        item.partType,
+        item.workCenterName || 'Supplier',
+        this.formatCsvNumber(item.quantityRequired),
+        this.formatCsvNumber(item.quantityAvailable),
+        this.formatCsvNumber(item.quantityOnOrder),
+        this.formatCsvNumber(item.shortage),
+        `${item.projectedReadyDays}`
+      ]),
+      'component-gap-detail'
+    );
   }
 
   protected trackByComponent(_: number, item: ComponentGapDocument): string {
@@ -245,9 +295,47 @@ export class PlanningPage implements OnInit {
       ]
     };
   }
+
+  private exportCsv(headers: string[], rows: string[][], fileSuffix: string): void {
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((value) => this.escapeCsvValue(value)).join(','))
+      .join('\r\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = this.buildExportFileName(fileSuffix);
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private buildExportFileName(fileSuffix: string): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = `${today.getMonth() + 1}`.padStart(2, '0');
+    const day = `${today.getDate()}`.padStart(2, '0');
+    return `naologic-planning-${fileSuffix}-${year}-${month}-${day}.csv`;
+  }
+
+  private formatCsvNumber(value: number): string {
+    return Number.isInteger(value) ? `${value}` : value.toFixed(2);
+  }
+
+  private escapeCsvValue(value: string): string {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
 }
 
 interface PlanningProductOption {
   partId: string;
   label: string;
+}
+
+type PlanningChartExportKey = 'required-vs-available' | 'shortage-by-part' | 'projected-ready-days';
+
+interface PlanningExportConfig {
+  fileSuffix: string;
+  headers: string[];
+  rows: () => string[][];
 }

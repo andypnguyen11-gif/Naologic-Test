@@ -73,6 +73,9 @@
             <h2>Required vs Available</h2>
             <p>Each tractor requirement expanded from the BOM and compared with inventory on hand.</p>
           </div>
+          <button class="planning-export-button" type="button" (click)="exportChartCsv('required-vs-available')">
+            Export CSV
+          </button>
         </div>
         <highcharts-chart
           [options]="requiredVsAvailableOptions"
@@ -86,6 +89,9 @@
             <h2>Shortage by Part</h2>
             <p>Components blocking the current production target.</p>
           </div>
+          <button class="planning-export-button" type="button" (click)="exportChartCsv('shortage-by-part')">
+            Export CSV
+          </button>
         </div>
         <highcharts-chart
           [options]="shortageOptions"
@@ -99,6 +105,9 @@
             <h2>Projected Ready Days</h2>
             <p>Lead or build time needed before each component is ready.</p>
           </div>
+          <button class="planning-export-button" type="button" (click)="exportChartCsv('projected-ready-days')">
+            Export CSV
+          </button>
         </div>
         <highcharts-chart
           [options]="readinessOptions"
@@ -113,6 +122,9 @@
           <h2>Component Gap Detail</h2>
           <p>Joined output from parts, inventory, and work centers.</p>
         </div>
+        <button class="planning-export-button" type="button" (click)="exportGridCsv()">
+          Export CSV
+        </button>
       </div>
 
       <div class="planning-table-wrap">
